@@ -7,3 +7,4 @@ utilities:
   - git
   - gh
   - httpie
+  - podman
