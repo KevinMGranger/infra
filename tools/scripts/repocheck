@@ -1,0 +1,196 @@
+#!/usr/bin/env python3
+
+# checks that a repo is "fully backed up"
+
+import subprocess
+from subprocess import DEVNULL
+import sys
+import os
+import contextlib
+import typing
+from dataclasses import dataclass, field, fields
+import contextvars
+import concurrent.futures as futures
+
+LIST_REMOTE_BRANCHES = bool(os.environ.get("REPOCK_REMOTES", False))
+
+cwd = contextvars.ContextVar("cwd", default=os.getcwd())
+
+
+def gitfield(name, *args, **kwargs):
+    return field(*args, **kwargs, metadata={"gitfield": name})
+
+
+@dataclass
+class Branch:
+    name: str = gitfield("refname:short")
+    refname: str
+    upstream: str
+    upstream_track: str = gitfield("upstream:trackshort")
+    push: str
+    objectname: str
+
+    def behind_or_synced(self):
+        has_upstream = bool(self.upstream)
+        return has_upstream and (self.upstream_track in ("<", "="))
+
+    def merged_in_remote_of_same_name(self):
+        def remotes():
+            for ref in refs(f"refs/remotes/*/{self.name}"):
+                if LIST_REMOTE_BRANCHES:
+                    print(ref)
+                yield ref
+
+        return self.merged_into_any(remotes())
+
+    def merged_into_any(self, branches):
+        for potential_master in branches:
+            if potential_master.refname == self.refname:
+                continue
+            if is_merged(query=self.objectname, master=potential_master.objectname):
+                return True
+        return False
+
+
+ctor_args = [
+    f"%({field.metadata.get('gitfield', field.name)})" for field in fields(Branch)
+]
+Branch.format_arg = f"--format=Branch({', '.join(ctor_args)})"
+
+
+@dataclass
+class RepoIssue:
+    pass
+
+
+@dataclass
+class UncommittedFiles(RepoIssue):
+    any_commits_yet: bool
+
+    def message(self):
+        return "Repo has uncommitted files" + (
+            " (NO COMMITS)" if self.any_commits_yet else ""
+        )
+
+
+@dataclass
+class HasStashes(RepoIssue):
+    @staticmethod
+    def message():
+        return "Repo has stashes"
+
+
+@dataclass
+class UnsyncedBranches(RepoIssue):
+    branches: typing.List[Branch]
+
+    def message(self):
+        messages = []
+        for branch in self.branches:
+            messages.append(
+                f"Branch {branch.name} is not merged into any other branch and either has no upstream, or is ahead of upstream"
+            )
+
+        return "\n".join(messages)
+
+
+def is_merged(*, query, master):
+    result = subprocess.run(
+        ["git", "-C", cwd.get(), "merge-base", master, query],
+        capture_output=True,
+        text=True,
+    )
+    if LIST_REMOTE_BRANCHES:
+        print(result)
+    if result.returncode == 1:
+        return False
+    elif result.returncode == 0:
+        return result.stdout.strip() == query
+    else:
+        result.check_returncode()
+
+
+def refs(pattern="refs/heads/**"):
+    cmd = [
+        "git",
+        "-C",
+        cwd.get(),
+        "for-each-ref",
+        pattern,
+        Branch.format_arg,
+        "--python",
+    ]
+    refs = subprocess.run(cmd, capture_output=True, text=True, check=True).stdout
+
+    for line in refs.splitlines():
+        yield eval(line)
+
+
+def checkrepo(path) -> typing.Optional[typing.List[RepoIssue]]:
+    if not os.path.isdir(path):
+        return None
+    if not os.path.isdir(os.path.join(path, ".git")):
+        return None
+
+    token = cwd.set(path)
+    try:
+        if issues := list(checkrepo_inner()):
+            message_parts = [path]
+            message_parts.extend(issue.message() for issue in issues)
+            return message_parts
+    finally:
+        cwd.reset(token)
+
+
+def has_uncommitted_files():
+    cmd = ("git", "-C", cwd.get(), "status", "--porcelain")
+    return bool(
+        subprocess.run(cmd, capture_output=True, text=True, check=True).stdout.strip()
+    )
+
+
+def has_no_commits():
+    cmd = ("git", "-C", cwd.get(), "rev-parse", "HEAD")
+    return (
+        subprocess.run(cmd, stdin=DEVNULL, stdout=DEVNULL, stderr=DEVNULL).returncode
+        == 128
+    )
+
+
+def has_stashes():
+    cmd = ("git", "-C", cwd.get(), "stash", "list")
+    return bool(
+        subprocess.run(cmd, capture_output=True, text=True, check=True).stdout.strip()
+    )
+
+
+def checkrepo_inner():
+    if has_uncommitted_files():
+        yield UncommittedFiles(has_no_commits())
+
+    if has_stashes():
+        yield HasStashes()
+
+    branches = []
+    for branch in refs():
+        branches.append(branch)
+        if branch.upstream and branch.upstream != branch.push:
+            print(f"diff up and push for {branch.name}! ({branch})")
+
+    for branch in branches:
+        if not (
+            branch.behind_or_synced()
+            or branch.merged_in_remote_of_same_name()
+            or branch.merged_into_any(branches)
+        ):
+            yield UnsyncedBranches([branch])
+
+
+if __name__ == "__main__":
+    with futures.ThreadPoolExecutor() as ex:
+        handles = [ex.submit(checkrepo, repo) for repo in sys.argv[1:]]
+        for finished_job in futures.as_completed(handles):
+            if issues := finished_job.result():
+                for issue in issues:
+                    print(issue)
+                print(flush=True)

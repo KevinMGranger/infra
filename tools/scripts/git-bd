@@ -1,0 +1,10 @@
+#!/usr/bin/env fish
+
+function git-bd
+    argparse h/help -- $argv
+    if set -q _flag_h
+        echo "Sets a description for the current branch that is viewable in `git bl`."
+        return 0
+    end
+    git config branch.(git symbolic-ref --short HEAD).description "$argv"
+end

@@ -1,0 +1,15 @@
+- name: copy into ~/.config
+  copy:
+    src: ../../config-files/config
+    dest: ~/.config
+    recurse: yes
+    directory_mode: "{{ default_dir_perms }}"
+    mode: "{{ default_file_perms }}"
+    backup: yes
+
+ - name: copy mac fish config
+   when: ansible_system is "Darwin"
+   copy:
+     src: ../../config-files/mac-wrappers.fish
+     dest: ~/.config/fish/config.d/
+     mode: "{{ default_file_perms }}"

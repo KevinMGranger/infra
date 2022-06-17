@@ -1,0 +1,94 @@
+#!/usr/bin/env python3
+
+# in idk because I learned that `gh` can really do this for me
+
+from urllib.parse import urlparse, ParseResult, urlunparse
+import sys
+import re
+from pathlib import PurePath
+from typing import NamedTuple
+import subprocess
+
+
+class Repos(NamedTuple):
+    name: str
+    mine: str
+    upstream: str | None
+
+
+def handle_http(url: ParseResult) -> Repos:
+    path = PurePath(url.path)
+    owner = str(path.parent)
+    name = path.stem
+
+    if owner == "/KevinMGranger":
+        return Repos(name=name, mine=urlunparse(url), upstream=None)
+
+    my_path = PurePath("/", "KevinMGranger", *path.parts[2:])
+    my_url = url._replace(path=str(my_path))
+    return Repos(name=name, mine=urlunparse(my_url), upstream=urlunparse(url))
+
+
+def try_http(url: str) -> Repos | None:
+    url = urlparse(sys.argv[1])
+
+    if url.scheme not in ("https", "http"):
+        return None
+
+    return handle_http(url)
+
+
+def handle_ssh(match: re.Match) -> Repos | None:
+    author = match[1]
+    name = match[2]
+
+    if author == "KevinMGranger":
+        return Repos(name=name, mine=match[0], upstream=None)
+
+    my_url = match.expand(r"git@github.com:KevinMGranger/\2.git")
+    upstream = match[0]
+    return Repos(name=name, mine=my_url, upstream=upstream)
+
+
+def try_ssh(url: str) -> Repos | None:
+    match = re.match(r"git@github.com:(.+)/(.+)\.git", url)
+
+    if not match:
+        return None
+
+    return handle_ssh(match)
+
+
+def clone(repos: Repos, dir_name=None):
+    clone_cmd = "git clone".split()
+    if repos.upstream:
+        clone_cmd.append(repos.upstream)
+        remote_add = "git remote add mine".split()
+        remote_add.append(repos.mine)
+    else:
+        clone_cmd.append(repos.mine)
+        remote_add = None
+
+    if dir_name:
+        clone_cmd.append(dir_name)
+
+    subprocess.run(clone_cmd, check=True)
+
+    if remote_add:
+        subprocess.run(remote_add, check=True, cwd=dir_name if dir_name else repos.name)
+
+
+def main(url, dir_name=None):
+    for repos in (func(url) for func in (try_http, try_ssh)):
+        if repos is None:
+            continue
+
+        clone(repos, dir_name)
+        subprocess.run(["code", dir_name if dir_name else repos.name], check=True)
+        break
+    else:
+        sys.exit(f"Couldn't parse repo url {url}")
+
+
+if __name__ == "__main__":
+    main(*sys.argv[1:])

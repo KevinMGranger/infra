@@ -1,0 +1,28 @@
+#!/usr/bin/env fish
+
+function git-bl
+    argparse h/help -- $argv
+    if set -q _flag_h
+        echo "Prints git branches but with their \"description\" added as well."
+        return 0
+    end
+
+    set branches (git for-each-ref --format='%(refname)' 'refs/heads/*')
+    or return
+
+    set head (git symbolic-ref HEAD)
+    function inner-print -V branches -V head
+        for branch in $branches
+            if test $branch = $head
+                set star '* '
+            else
+                set star '  '
+            end
+            set branch (basename $branch)
+            echo -e $star$branch "\t" (git config branch.$branch.description)
+        end
+    end
+    inner-print | column -t -s '	'
+end
+
+git-br

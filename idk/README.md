@@ -1,0 +1,3 @@
+- Stuff that I found in existing dotfiles and couldn't explain why it was there.
+- Or know that it's important but want to see what happens without it.
+- Or is related to tooling I might only set up later.
