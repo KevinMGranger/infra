@@ -1,4 +1,4 @@
-vscode
+/.vscode
 *.iml
 .idea
 target
