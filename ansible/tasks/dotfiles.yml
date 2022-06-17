@@ -1,16 +1,14 @@
 - name: copy into ~/.config
-  # TODO DOES THIS JUST NEST IT
   copy:
-    src: ../../config-files/config
+    src: ../../config-files/config/
     dest: ~/.config
-    recurse: yes
     directory_mode: "{{ default_dir_perms }}"
     mode: preserve
     backup: yes
 
- - name: copy mac fish config
-   when: ansible_system is "Darwin"
-   copy:
-     src: ../../config-files/mac-wrappers.fish
-     dest: ~/.config/fish/config.d/
-     mode: preserve
+- name: copy mac fish config
+  when: ansible_system == "Darwin"
+  copy:
+    src: ../../config-files/mac-wrappers.fish
+    dest: ~/.config/fish/conf.d/
+    mode: preserve

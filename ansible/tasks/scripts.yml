@@ -2,14 +2,12 @@
   file:
     path: ~/.local
     state: directory
-    mode: preserve
+    mode: u=rwx,g=,o=
 
 - name: copy into ~/.local/bin
-  # TODO DOES THIS JUST NEST IT
   copy:
-    src: ../../tools/scripts
+    src: ../../tools/scripts/
     dest: ~/.local/bin
-    recurse: yes
-    directory_mode: preserve
+    directory_mode: "{{ default_dir_perms }}"
     mode: preserve
     backup: yes
