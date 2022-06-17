@@ -2,7 +2,7 @@
   file:
     path: ~/.local
     state: directory
-    mode: "{{ default_dir_perms }}"
+    mode: preserve
 
 - name: copy into ~/.local/bin
   # TODO DOES THIS JUST NEST IT
@@ -10,6 +10,6 @@
     src: ../../tools/scripts
     dest: ~/.local/bin
     recurse: yes
-    directory_mode: "{{ default_dir_perms }}"
-    mode: "{{ default_file_perms }}"
+    directory_mode: preserve
+    mode: preserve
     backup: yes

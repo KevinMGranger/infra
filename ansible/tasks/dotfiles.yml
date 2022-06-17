@@ -5,7 +5,7 @@
     dest: ~/.config
     recurse: yes
     directory_mode: "{{ default_dir_perms }}"
-    mode: "{{ default_file_perms }}"
+    mode: preserve
     backup: yes
 
  - name: copy mac fish config
@@ -13,4 +13,4 @@
    copy:
      src: ../../config-files/mac-wrappers.fish
      dest: ~/.config/fish/config.d/
-     mode: "{{ default_file_perms }}"
+     mode: preserve
