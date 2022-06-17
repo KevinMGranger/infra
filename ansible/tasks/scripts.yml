@@ -1,0 +1,15 @@
+- name: ensure ~/.local exists
+  file:
+    path: ~/.local
+    state: directory
+    mode: "{{ default_dir_perms }}"
+
+- name: copy into ~/.local/bin
+  # TODO DOES THIS JUST NEST IT
+  copy:
+    src: ../../tools/scripts
+    dest: ~/.local/bin
+    recurse: yes
+    directory_mode: "{{ default_dir_perms }}"
+    mode: "{{ default_file_perms }}"
+    backup: yes

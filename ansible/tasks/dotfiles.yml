@@ -1,4 +1,5 @@
 - name: copy into ~/.config
+  # TODO DOES THIS JUST NEST IT
   copy:
     src: ../../config-files/config
     dest: ~/.config
