@@ -1,0 +1,9 @@
+---
+utilities:
+  - rg
+  - exa
+  - bat
+  - fd
+  - git
+  - gh
+  - httpie

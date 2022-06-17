@@ -9,6 +9,6 @@
 - name: copy mac fish config
   when: ansible_system == "Darwin"
   copy:
-    src: ../../config-files/mac-wrappers.fish
+    src: ../../config-files/mac.fish
     dest: ~/.config/fish/conf.d/
     mode: preserve

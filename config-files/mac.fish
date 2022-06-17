@@ -1,3 +1,5 @@
+eval (/opt/homebrew/bin/brew shellenv)
+
 # todo: is this still necessary?
 abbr -a ansible-playbook env OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES ANSIBLE_NOCOWS=1 ansible-playbook
 
