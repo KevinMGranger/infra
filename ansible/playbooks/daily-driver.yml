@@ -1,0 +1,78 @@
+- name: set up most things
+  hosts: all
+  vars:
+    default_dir_perms: u=rwx,g=,o=
+    default_file_perms: u=rw,g=,o=
+    default_script_perms: u=rwx,g=,o=
+    packages:
+      - fish
+      - rg
+      - exa
+      - bat
+      - fd
+      - git
+      - gh
+      - httpie
+      - podman
+      - tmux
+  tasks:
+    - name: install packages
+      package:
+        name: "{{ packages }}"
+      async: 300 # 5 minutes
+      poll: 0
+      register: pkg_install
+      tags: [pkg]
+    
+    - name: install rust(up)
+      shell:
+        cmd: curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+        creates: ~/.cargo/bin/rustup
+      async: 120
+      poll: 0
+      register: rustup
+      tags: [rust]
+
+    - import_tasks: "../tasks/dotfiles.yml"
+      tags: [dotfiles]
+    - import_tasks: "../tasks/scripts.yml"
+      tags: [scripts]
+
+    - name: wait for rust
+      async_status:
+        jid: "{{ rustup.ansible_job_id }}"
+      register: rustup_result
+      until: rustup_result.finished
+      retries: 3
+      delay: 5
+      tags: [rust]
+    
+    - name: install current-kube-context
+      command:
+        cmd: cargo install --git https://github.com/KevinMGranger/rukube/ current-kube-context
+        creates: ~/.cargo/bin/current-kube-context
+      async: 150
+      poll: 0
+      register: kube_ctx
+      tags: [rust]
+
+    - name: wait for packages to be installed
+      async_status:
+        jid: "{{ pkg_install.ansible_job_id }}"
+      register: pkg_install_result
+      until: pkg_install_result.finished
+      retries: 3
+      delay: 5
+      tags: [fishy, pkg]
+
+    - import_tasks: "../tasks/fish-as-default.yml"
+      tags: [fishy]
+    
+    - name: wait for kube-ctx
+      async_status:
+        jid: "{{ kube_ctx.ansible_job_id }}"
+      register: kube_ctx_result
+      until: kube_ctx_result.finished
+      retries: 3
+      delay: 5
+      tags: [rust]
