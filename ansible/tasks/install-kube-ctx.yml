@@ -1,0 +1,3 @@
+- command:
+    cmd: cargo install --git https://github.com/KevinMGranger/rukube/ current-kube-context
+    creates: ~/.cargo/bin/current-kube-context
