@@ -1,0 +1,21 @@
+---
+- name: set up OpenShift local on a machine, ready to be used remotely.
+  hosts: crc
+  vars_prompt:
+    - prompt: CRC Pull Secret
+      name: pull_secret
+      private: no
+  tasks:
+    - name: make sure ~/.local/bin exists
+      file:
+        path: ~/.local/bin
+        state: directory
+
+    - name: put crc binary in local bin
+      unarchive:
+        remote_src: yes
+        src: https://developers.redhat.com/content-gateway/rest/mirror/pub/openshift-v4/clients/crc/latest/crc-linux-amd64.tar.xz
+        dest: ~/.local/bin/crc
+        creates: ~/.local/bin/crc
+        # TODO: how do I glob here? can I not and I have to use a temp dir?
+        
