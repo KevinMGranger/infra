@@ -1,15 +1,18 @@
 - name: get fish path
   command: which fish
   register: fish_path_output
+  tags: [become]
 
 - name: ensure fish presence in /etc/shells
   become: yes
   lineinfile:
     line: "{{ fish_path_output.stdout }}"
     path: /etc/shells
+  tags: [become]
 
 - name: set shell
   become: yes
   user:
     name: kevin
     shell: "{{ fish_path_output.stdout }}"
+  tags: [become]
