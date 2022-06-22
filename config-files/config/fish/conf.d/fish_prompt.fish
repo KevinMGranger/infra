@@ -37,7 +37,7 @@ function fish_prompt --description 'Write out the prompt'
                 set -g __fish_prompt_cwd (set_color $fish_color_cwd)
             end
 
-            if which current-kube-context > /dev/null
+            if which current-kube-context > /dev/null 2>/dev/null
                 set kube_ctx (current-kube-context 2>/dev/null); or set kube_ctx "unknown context"
             else
                 set kube_ctx "current-kube-context not installed"
