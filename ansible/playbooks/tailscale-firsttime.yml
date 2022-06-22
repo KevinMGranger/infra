@@ -1,0 +1,41 @@
+- name: install tailscale for the first time on a machine
+  hosts: all
+  become: yes
+  vars_prompt:
+    - name: tailscale_auth_key
+      prompt: What is the tailscale auth key?
+      private: yes
+  tasks:
+    - get_url:
+        url: https://pkgs.tailscale.com/stable/fedora/tailscale.repo
+        dest: /etc/yum.repos.d/tailscale.repo
+
+    - name: install tailscale
+      package:
+        name: tailscale
+    
+    - name: enable and start tailscaled
+      systemd:
+        name: tailscaled
+        enabled: yes
+        state: started
+
+    - debug:
+        var: tailscale_auth_key
+    
+    - name: connect to tailscale
+      command: 
+        argv:
+          - tailscale
+          - up
+          - --reset
+          - --accept-dns
+          - --auth-key
+          - "{{ tailscale_auth_key }}"
+
+    - name: get tailscale ip
+      command: tailscale ip -4
+      register: tailscale_ip
+    
+    - debug:
+        msg: "Tailscale IP: {{ tailscale_ip.stdout }}"
