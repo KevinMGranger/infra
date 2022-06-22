@@ -24,6 +24,16 @@
       - neovim
       - code # todo automate this for mac as well
   tasks:
+    - name: is this a graphical linux box?
+      command: which dconf
+      register: dconf
+
+    - name: set capslock to ctrl
+      community.general.dconf:
+        key: /org/gnome/desktop/input-sources/xkb-options
+        value: "['ctrl:nocaps']"
+      when: dconf is success
+
     - name: set up vs code repo
       import_tasks: ../tasks/vscode-redhat.yml
       when: ansible_os_family == "RedHat"
