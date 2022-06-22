@@ -29,7 +29,7 @@
       poll: 0
       register: pkg_install
       become: "{{ ansible_os_family != 'Darwin' }}"
-      tags: [pkg]
+      tags: [pkg, never]
     
     - name: install rust(up)
       shell:
@@ -61,7 +61,7 @@
       async: 150
       poll: 0
       register: kube_ctx
-      tags: [rust, kube-ctx, never]
+      tags: [kube-ctx, never]
 
     - name: wait for packages to be installed
       async_status:
@@ -83,4 +83,4 @@
       until: kube_ctx_result.finished
       retries: 3
       delay: 5
-      tags: [rust, kube-ctx, never]
+      tags: [kube-ctx, never]
