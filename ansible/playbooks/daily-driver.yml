@@ -1,5 +1,5 @@
 - name: set up most things
-  hosts: all
+  hosts: daily_drivers
   vars:
     default_dir_perms: u=rwx,g=,o=
     default_file_perms: u=rw,g=,o=
@@ -21,7 +21,12 @@
       - ripgrep
       - fd-find
       - neovim
+      - code
   tasks:
+    - name: set up vs code repo
+      import_tasks: ../tasks/vscode-redhat.yml
+      when: ansible_os_family == "RedHat"
+
     - name: install packages
       package:
         name: "{{ packages  + vars['packages_' + (ansible_os_family | lower)]}}"
@@ -29,7 +34,7 @@
       poll: 0
       register: pkg_install
       become: "{{ ansible_os_family != 'Darwin' }}"
-      tags: [pkg, never]
+      tags: [pkg]
     
     - name: install rust(up)
       shell:
@@ -61,7 +66,7 @@
       async: 150
       poll: 0
       register: kube_ctx
-      tags: [kube-ctx, never]
+      tags: [kube-ctx]
 
     - name: wait for packages to be installed
       async_status:
@@ -74,13 +79,13 @@
       tags: [fishy, pkg]
 
     - import_tasks: "../tasks/fish-as-default.yml"
-      tags: [fishy, never]
+      tags: [fishy]
     
     - name: wait for kube-ctx
       async_status:
         jid: "{{ kube_ctx.ansible_job_id }}"
       register: kube_ctx_result
       until: kube_ctx_result.finished
-      retries: 3
+      retries: 30
       delay: 5
-      tags: [kube-ctx, never]
+      tags: [kube-ctx]
