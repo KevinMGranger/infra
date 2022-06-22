@@ -6,23 +6,29 @@
     default_script_perms: u=rwx,g=,o=
     packages:
       - fish
-      - rg
       - exa
       - bat
-      - fd
       - git
       - gh
       - httpie
       - podman
       - tmux
+    packages_darwin:
+      - rg
+      - fd
       - nvim
+    packages_redhat:
+      - ripgrep
+      - fd-find
+      - neovim
   tasks:
     - name: install packages
       package:
-        name: "{{ packages }}"
+        name: "{{ packages  + vars['packages_' + (ansible_os_family | lower)]}}"
       async: 300 # 5 minutes
       poll: 0
       register: pkg_install
+      become: "{{ ansible_os_family != 'Darwin' }}"
       tags: [pkg]
     
     - name: install rust(up)
@@ -44,7 +50,7 @@
         jid: "{{ rustup.ansible_job_id }}"
       register: rustup_result
       until: rustup_result.finished
-      retries: 3
+      retries: 30
       delay: 5
       tags: [rust]
     
@@ -55,7 +61,7 @@
       async: 150
       poll: 0
       register: kube_ctx
-      tags: [rust]
+      tags: [rust, kube-ctx, never]
 
     - name: wait for packages to be installed
       async_status:
@@ -64,10 +70,11 @@
       until: pkg_install_result.finished
       retries: 30
       delay: 5
+      become: "{{ ansible_os_family != 'Darwin' }}"
       tags: [fishy, pkg]
 
     - import_tasks: "../tasks/fish-as-default.yml"
-      tags: [fishy]
+      tags: [fishy, never]
     
     - name: wait for kube-ctx
       async_status:
@@ -76,4 +83,4 @@
       until: kube_ctx_result.finished
       retries: 3
       delay: 5
-      tags: [rust]
+      tags: [rust, kube-ctx, never]
