@@ -27,6 +27,7 @@
     - name: is this a graphical linux box?
       command: which dconf
       register: dconf
+      ignore_errors: yes
 
     - name: set capslock to ctrl
       community.general.dconf:
