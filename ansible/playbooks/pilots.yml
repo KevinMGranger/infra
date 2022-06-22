@@ -1,0 +1,11 @@
+- name: set up cockpt
+  hosts: pilots
+  tasks:
+    # TODO install cockpit? almost always there by default
+    # TODO start / enable cockpit? same as above
+    - name: open the port
+      ansible.posix.firewalld:
+        zone: tail
+        service: cockpit
+        state: enabled
+      become: yes
