@@ -5,6 +5,7 @@
     default_file_perms: u=rw,g=,o=
     default_script_perms: u=rwx,g=,o=
     packages:
+      - htop
       - fish
       - exa
       - bat
@@ -21,7 +22,7 @@
       - ripgrep
       - fd-find
       - neovim
-      - code
+      - code # todo automate this for mac as well
   tasks:
     - name: set up vs code repo
       import_tasks: ../tasks/vscode-redhat.yml
@@ -67,6 +68,7 @@
       poll: 0
       register: kube_ctx
       tags: [kube-ctx]
+      when: "'kubernauts' in group_names"
 
     - name: wait for packages to be installed
       async_status:
@@ -89,3 +91,4 @@
       retries: 30
       delay: 5
       tags: [kube-ctx]
+      when: "'kubernauts' in group_names"
