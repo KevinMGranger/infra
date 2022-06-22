@@ -1,0 +1,17 @@
+- rpm_key:
+  key: https://packages.microsoft.com/keys/microsoft.asc
+
+- copy:
+    content: |
+      [code]
+      name=Visual Studio Code
+      baseurl=https://packages.microsoft.com/yumrepos/vscode
+      enabled=1
+      gpgcheck=1
+      gpgkey=https://packages.microsoft.com/keys/microsoft.asc"
+    path: /etc/yum.repos.d/vscode.repo
+    become: yes
+
+- package:
+    name: code
+  become: yes
