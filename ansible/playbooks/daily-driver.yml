@@ -18,6 +18,7 @@
       - rg
       - fd
       - nvim
+      - mockoon
     packages_redhat:
       - ripgrep
       - fd-find
