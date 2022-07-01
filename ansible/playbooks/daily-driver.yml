@@ -20,6 +20,7 @@
       - nvim
       - mockoon
     packages_redhat:
+      - just
       - ripgrep
       - fd-find
       - neovim
