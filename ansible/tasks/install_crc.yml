@@ -1,5 +1,35 @@
-# TODO: I should probably make a
-# https://developers.redhat.com/content-gateway/rest/mirror/pub/openshift-v4/clients/crc/latest/crc-linux-amd64.tar.xz
-- name: download and unpack crc
+# TODO: check for existence and version (either hard-coded or crc status)
+# TODO: check for running instance and stop?
+
+
+- name: create temp dir for crc contents
+  tempfile:
+    prefix: crc
+    state: directory
+  register: tmpdir
+
+- name: download crc
+  get_url:
+    dest: "{{ tmpdir.path }}/crc.tar.xz"
+    url: https://developers.redhat.com/content-gateway/rest/mirror/pub/openshift-v4/clients/crc/latest/crc-linux-amd64.tar.xz
+
+- name: unpack crc
   unarchive:
-    src: https://developers.redhat.com/content-gateway/rest/mirror/pub/openshift-v4/clients/crc/latest/crc-linux-amd64.tar.xz
+    src: "{{ tmpdir.path }}/crc.tar.xz"
+    remote_src: yes
+    dest: "{{ tmpdir.path }}"
+
+- name: get crc binary path
+  find:
+    recurse: yes
+    paths: "{{tmpdir.path}}"
+    patterns: "crc"
+  register: globbed_binary
+
+- assert:
+    that: [globbed_binary.files | length == 1]
+    msg: found more than one crc file
+
+- name: run crc setup
+  command:
+    argv: ["{{globbed_binary.files[0].path}}", setup]
