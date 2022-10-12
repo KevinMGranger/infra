@@ -1,13 +1,6 @@
-
 - name: set up CodeReady Containers / OpenShift Local
   hosts: crc_runners
-  tasks:
-    - import_tasks: ../tasks/install_crc.yml
-
-# TODO: configuration?
-# TODO: pull secret?
-# TODO eventually: certificate setup
-# TODO eventually: authenticating proxy setup
+  roles: [../roles/crc_runner]
 
 # - name: Set up networking infrastructure to reach crc remotely
 #   hosts: todo

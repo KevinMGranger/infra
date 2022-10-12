@@ -1,0 +1,13 @@
+- name: get latest version info
+  uri:
+    url: "{{latest_release_url_base}}/release-info.json"
+    return_content: yes
+  register: release_info_json
+
+- name: set latest version info
+  set_fact:
+    latest_release_version: "{{(release_info_json.content | from_json).version.crcVersion}}"
+
+- name: compare versions
+  set_fact:
+    is_out_of_date: "{{local_crc_version is version(latest_release_version, operator='lt')}}"

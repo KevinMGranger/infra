@@ -1,7 +1,3 @@
-# TODO: check for existence and version (either hard-coded or crc status)
-# TODO: check for running instance and stop?
-
-
 - name: create temp dir for crc contents
   tempfile:
     prefix: crc
@@ -11,7 +7,7 @@
 - name: download crc
   get_url:
     dest: "{{ tmpdir.path }}/crc.tar.xz"
-    url: https://developers.redhat.com/content-gateway/rest/mirror/pub/openshift-v4/clients/crc/latest/crc-linux-amd64.tar.xz
+    url: "{{latest_release_url_base}}/crc-linux-amd64.tar.xz"
 
 - name: unpack crc
   unarchive:

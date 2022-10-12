@@ -1,0 +1,11 @@
+---
+- name: check local version
+  import_tasks: check_local_version.yml
+
+- name: check against latest version
+  include_tasks: check_latest_version.yml
+  when: local_crc_version is defined
+
+- name: install if needed
+  include_tasks: install.yml
+  when: is_out_of_date | default(True)

@@ -1,0 +1,15 @@
+- name: check if crc is installed at all
+  stat:
+    path: "{{installed_crc_path}}"
+  register: stat
+
+- name: check current CRC version
+  command:
+    argv: ["{{installed_crc_path}}", version, "-o", json]
+  register: crc_version_result
+  when: stat.stat.exists
+
+- name: set version to crc version output
+  set_fact:
+    local_crc_version: "{{(crc_version_result.stdout | from_json).version}}"
+  when: crc_version_result is defined
