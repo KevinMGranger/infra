@@ -19,6 +19,11 @@
       - fd
       - nvim
       - mockoon
+      - tokei
+      - python@3.8
+      - python@3.9
+      - python@3.10
+      - jq
     packages_redhat:
       - just
       - ripgrep
@@ -29,7 +34,7 @@
     - name: is this a graphical linux box?
       command: which dconf
       register: dconf
-      ignore_errors: yes
+      ignore_errors: true
 
     - name: set capslock to ctrl
       community.general.dconf:
@@ -48,6 +53,13 @@
       poll: 0
       register: pkg_install
       become: "{{ ansible_os_family != 'Darwin' }}"
+      tags: [pkg]
+    
+    - name: link python
+      community.general.homebrew:
+        name: python@3.10
+        state: linked
+      when: ansible_os_family == 'Darwin'
       tags: [pkg]
     
     - name: install rust(up)
