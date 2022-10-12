@@ -27,7 +27,7 @@ function fish_prompt --description 'Write out the prompt'
                 end
             end
 
-            printf '%s@%s %s%s%s# ' $USER (prompt_hostname) "$__fish_prompt_cwd" (prompt_pwd) "$__fish_prompt_normal"
+            printf '%s@%s %s %s%s%s# ' $USER (prompt_hostname) $emoji "$__fish_prompt_cwd" (prompt_pwd) "$__fish_prompt_normal"
 
         case '*'
 
@@ -60,7 +60,7 @@ function fish_prompt --description 'Write out the prompt'
             set git (fish_git_prompt)
             if test $status -ne 0; set git "no git repo"; end
 
-            printf '[%s] %s%s@%s %s%s %s(%s)%s ⎇ %s ☸️ %s 🇪 %s\f\r> ' (date "+%H:%M:%S") "$__fish_color_blue" $USER (prompt_hostname) "$__fish_prompt_cwd" "$PWD" "$__fish_color_status" "$stat" "$__fish_prompt_normal" $git $kube_ctx $dotenv_status
+            printf '[%s] %s%s@%s %s %s%s %s(%s)%s ⎇ %s ☸️ %s 🇪 %s\f\r> ' (date "+%H:%M:%S") "$__fish_color_blue" $USER (prompt_hostname) $emoji "$__fish_prompt_cwd" "$PWD" "$__fish_color_status" "$stat" "$__fish_prompt_normal" $git $kube_ctx $dotenv_status
 
     end
 end
