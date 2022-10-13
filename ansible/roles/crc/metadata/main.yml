@@ -1,0 +1,11 @@
+galaxy_info:
+  role_name: crc
+  author: Kevin M Granger
+  description: Install and set up OpenShift Local
+
+  license: FIXME
+  min_ansible_version: "2.13"
+
+  platforms:
+    - name: Fedora
+      versions: ["35"] # TODO: test more versions
