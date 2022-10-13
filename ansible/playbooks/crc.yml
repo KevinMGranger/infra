@@ -1,6 +1,6 @@
 - name: set up CodeReady Containers / OpenShift Local
   hosts: crc_runners
-  roles: [../roles/crc]
+  roles: [kevinmgranger.crc.crc]
 
 # - name: Set up networking infrastructure to reach crc remotely
 #   hosts: todo
