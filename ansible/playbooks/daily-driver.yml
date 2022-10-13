@@ -20,11 +20,12 @@
       - nvim
       - mockoon
       - tokei
-      - python@3.8
       - python@3.9
       - python@3.10
       - jq
       - tree
+      - ansible
+      - ansible-lint
     packages_redhat:
       - just
       - ripgrep
