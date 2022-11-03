@@ -26,6 +26,13 @@
       - tree
       - ansible
       - ansible-lint
+      - moreutils
+      - watch
+      - node
+      - golang
+      - ascii
+      - tokei
+      - tailscale
     packages_redhat:
       - just
       - ripgrep
