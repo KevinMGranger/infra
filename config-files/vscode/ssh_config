@@ -1,0 +1,5 @@
+{% for host in groups['vscode_remotes'] %}
+Host {{ host }}
+    RemoteCommand bash
+
+{% endfor %}

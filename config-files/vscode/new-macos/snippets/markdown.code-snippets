@@ -1,0 +1,22 @@
+{
+	"collapsable details": {
+		"description": "A collapsable, named section",
+		"prefix": "details",
+		"body": [
+			"<details><summary>$1</summary>",
+			"$2",
+			"</details>"
+		]
+	},
+	"collapsable code": {
+		"description": "A collapsable, named, monospaced section",
+		"prefix": "codetails",
+		"body": [
+			"<details><summary>$1</summary>",
+			"",
+			"```$2",
+			"```",
+			"</details>"
+		]
+	}
+}

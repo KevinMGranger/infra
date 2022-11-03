@@ -38,23 +38,7 @@
       - ripgrep
       - fd-find
       - neovim
-      - code # todo automate this for mac as well
   tasks:
-    - name: is this a graphical linux box?
-      command: which dconf
-      register: dconf
-      ignore_errors: true
-
-    - name: set capslock to ctrl
-      community.general.dconf:
-        key: /org/gnome/desktop/input-sources/xkb-options
-        value: "['ctrl:nocaps']"
-      when: dconf is success
-
-    - name: set up vs code repo
-      import_tasks: ../tasks/vscode-redhat.yml
-      when: ansible_os_family == "RedHat"
-
     - name: install packages
       package:
         name: "{{ packages  + vars['packages_' + (ansible_os_family | lower)]}}"
@@ -63,14 +47,14 @@
       register: pkg_install
       become: "{{ ansible_os_family != 'Darwin' }}"
       tags: [pkg]
-    
+ 
     - name: link python
       community.general.homebrew:
         name: python@3.10
         state: linked
       when: ansible_os_family == 'Darwin'
       tags: [pkg]
-    
+
     - name: install rust(up)
       shell:
         cmd: curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
@@ -116,7 +100,7 @@
 
     - import_tasks: "../tasks/fish-as-default.yml"
       tags: [fishy]
-    
+
     - name: wait for kube-ctx
       async_status:
         jid: "{{ kube_ctx.ansible_job_id }}"

@@ -1,0 +1,31 @@
+{
+    "terminal.integrated.defaultProfile.linux": "fish",
+    "remote.SSH.configFile": "~/.ssh/config-vscode",
+    "window.autoDetectColorScheme": true,
+    "python.analysis.typeCheckingMode": "basic",
+    "editor.minimap.enabled": false,
+    "markdown-table-formatter.markdownGrammarScopes": [
+        "markdown",
+        "python"
+    ],
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.python"
+    },
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        "**/.DS_Store": true,
+        "**/Thumbs.db": true,
+        "**/__pycache__": true,
+        "**/*.egg-info": true,
+        ".pytest_cache": true,
+    },
+    "redhat.telemetry.enabled": false,
+    "window.zoomLevel": 1,
+    "jupyter.askForKernelRestart": false,
+    "git.confirmSync": false,
+    "ansibleServer.trace.server": "messages",
+    "workbench.colorTheme": "Default Light+"
+}

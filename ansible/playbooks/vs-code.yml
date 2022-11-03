@@ -1,0 +1,84 @@
+- name: Set up vs code
+  hosts: vscode_runner
+  tasks:
+    - name: Set up rpm_key if on RedHat
+      when: ansible_os_family == "RedHat"
+      become: true
+      rpm_key:
+        key: https://packages.microsoft.com/keys/microsoft.asc
+
+    - name: Set up repo if on RedHat
+      when: ansible_os_family == "RedHat"
+      become: true
+      copy:
+        content: |
+          [code]
+          name=Visual Studio Code
+          baseurl=https://packages.microsoft.com/yumrepos/vscode
+          enabled=1
+          gpgcheck=1
+          gpgkey=https://packages.microsoft.com/keys/microsoft.asc"
+        dest: /etc/yum.repos.d/vscode.repo
+
+    - name: Install (RedHat)
+      when: ansible_os_family == "RedHat"
+      become: true
+      package:
+        name: code
+
+    - name: Install (macOS)
+      when: ansible_os_family == "Darwin"
+      community.general.homebrew_cask:
+        name: visual-studio-code
+
+    - name: SSH Config File
+      when: "'vscode_remotes' in groups"
+      template:
+        dest: ~/.ssh/config-vscode
+        src: ../../config-files/vscode/ssh_config
+
+
+    - name: Copy config files
+      copy:
+        src: ../../config-files/vscode/new-macos/ # TODO: merging others
+        dest: "{{ _settings_dir_by_os[ansible_os_family] }}"
+        directory_mode: u=rwx,g=,o=
+        mode: preserve
+        backup: true
+      vars:
+        # TODO: look up windows path
+        _settings_dir_by_os:
+          Darwin: "~/Library/Application Support/Code/User"
+          WINDOWSTODO: '%AppData%\Code\User\' # TODO: will % expand properly?
+
+    - name: Install vs code extensions
+      command: code --install-extension {{ extensions | join(' --install-extension ') }}
+      register: vscode_ext_install
+      changed_when: "'was successfully installed' in vscode_ext_install.stdout"
+      vars:
+        extensions:
+          - 1dot75cm.RPMSpec
+          - bungcip.better-toml
+          - eamodio.gitlens
+          - fcrespo82.markdown-table-formatter
+          - golang.go
+          - kangping.protobuf
+          - ms-kubernetes-tools.vscode-kubernetes-tools
+          - ms-python.python
+          - ms-python.vscode-pylance
+          - ms-toolsai.jupyter
+          - ms-toolsai.jupyter-keymap
+          - ms-toolsai.jupyter-renderers
+          - ms-toolsai.vscode-jupyter-cell-tags
+          - ms-toolsai.vscode-jupyter-slideshow
+          - ms-vscode-remote.remote-ssh
+          - ms-vscode-remote.remote-ssh-edit
+          - ms-vscode.makefile-tools
+          - ms-vsliveshare.vsliveshare
+          - redhat.ansible
+          - redhat.vscode-yaml
+          - rust-lang.rust-analyzer
+          - skyapps.fish-vscode
+          - vadimcn.vscode-lldb
+          - vscodevim.vim
+          - wholroyd.jinja
