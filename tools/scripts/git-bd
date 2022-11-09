@@ -1,10 +1,36 @@
 #!/usr/bin/env fish
 
+# TODO: actual error handling
 function git-bd
-    argparse h/help -- $argv
+    set fish_trace on
+    argparse h/help b/branch= -- $argv
     if set -q _flag_h
         echo "Sets a description for the current branch that is viewable in `git bl`."
         return 0
     end
-    git config branch.(git symbolic-ref --short HEAD).description "$argv"
+
+    # TODO: validate branch existence
+    if set -q _flag_b
+        set branch $_flag_b
+
+        if not string match -q '*/*' $branch # short ref
+            set branch (git show-ref --heads $branch | string split -f 2 ' ')
+            set short_branch $branch
+        else
+            set short_branch (git rev-parse --abbrev-ref $branch)
+        end
+    else
+        set branch (git symbolic-ref HEAD)
+        set short_branch (git rev-parse --abbrev-ref $branch)
+    end
+
+    set branch_obj_hash (echo "$branch" | git hash-object -w --stdin --no-filters)
+    set desc_obj_hash (echo "$argv" | git hash-object -w --stdin --no-filters)
+
+    set tree_hash (echo -e "100400 blob $branch_obj_hash\tbranch\n100400 blob $desc_obj_hash\tdescription" |
+        git mktree)
+    
+    git update-ref refs/descriptions/$short_branch $tree_hash
 end
+
+git-bd $argv
