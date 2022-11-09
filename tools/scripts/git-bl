@@ -1,28 +1,40 @@
 #!/usr/bin/env fish
 
+function get-branch-desc --argument-names branch # short ref
+    set tree_hash (git show-ref -s refs/descriptions/$branch)
+
+    git show $tree_hash:description
+end
+
+
 function git-bl
-    argparse h/help -- $argv
+    argparse h/help a/all -- $argv
     if set -q _flag_h
         echo "Prints git branches but with their \"description\" added as well."
         return 0
     end
 
-    set branches (git for-each-ref --format='%(refname)' 'refs/heads/*')
+    set head_ref (git rev-parse --abbrev-ref HEAD)
+
+    if not set -q _flag_a
+        get-branch-desc $head_ref
+        return
+    end
+
+    set branches (git for-each-ref --format='%(refname:short)' 'refs/heads/*')
     or return
 
-    set head (git symbolic-ref HEAD)
-    function inner-print -V branches -V head
+    function inner-print -V branches -V head_ref
         for branch in $branches
-            if test $branch = $head
+            if test $branch = $head_ref
                 set star '* '
             else
                 set star '  '
             end
-            set branch (basename $branch)
-            echo -e $star$branch "\t" (git config branch.$branch.description)
+            echo -e $star$branch "\t" (get-branch-desc $branch)
         end
     end
     inner-print | column -t -s '	'
 end
 
-git-br
+git-bl $argv
