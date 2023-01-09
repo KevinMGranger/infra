@@ -1,7 +1,33 @@
-- name: set up CodeReady Containers / OpenShift Local
+- name: Set up CodeReady Containers / OpenShift Local
   hosts: crc_runners
   roles: [kevinmgranger.crc.crc]
+  vars:
+    config:
+      memory: "{{ 20 * 1024 }}" # 20gb -> mib
+      disk-size: 128 # gb
+      cpus: 16
+      consent-telemetry: "yes"
+    pull_secret_path: "{{ ansible_env.HOME }}/crc_pull_secret"
+  vars_prompt:
+    - name: pull_secret
+      prompt: "Pull secret?"
+  tasks:
+    - name: Set CRC config items
+      ansible.builtin.command:
+        cmd: crc
+        argv: [config, set, "{{ item.key }}", "{{ item.value }}"]
+      changed_when: true
+      loop: "{{ config | dict2items }}"
 
-# - name: Set up networking infrastructure to reach crc remotely
-#   hosts: todo
-#   tasks: []
+    - name: Set up pull secret file contents
+      ansible.builtin.copy:
+        dest: "{{ pull_secret_path }}"
+        mode: u=r
+        state: present
+        content: "{{ pull_secret }}"
+
+    - name: Set pull secret path in config
+      ansible.builtin.command:
+        cmd: crc
+        argv: [config, set, "pull-secret-file", "{{ pull_secret_path }}"]
+      changed_when: true
