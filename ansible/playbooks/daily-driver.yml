@@ -1,4 +1,4 @@
-- name: set up most things
+- name: Set up most things
   hosts: daily_drivers
   vars:
     default_dir_perms: u=rwx,g=,o=
@@ -39,25 +39,27 @@
       - ripgrep
       - fd-find
       - neovim
+      - python3.11
+      - python3-hvac
   tasks:
-    - name: install packages
-      package:
-        name: "{{ packages  + vars['packages_' + (ansible_os_family | lower)]}}"
+    - name: Install packages
+      ansible.builtin.package:
+        name: "{{ packages + vars['packages_' + (ansible_os_family | lower)] }}"
       async: 300 # 5 minutes
       poll: 0
       register: pkg_install
       become: "{{ ansible_os_family != 'Darwin' }}"
       tags: [pkg]
- 
-    - name: link python
+
+    - name: Link python
       community.general.homebrew:
-        name: python@3.10
+        name: python@3.11
         state: linked
       when: ansible_os_family == 'Darwin'
       tags: [pkg]
 
-    - name: install rust(up)
-      shell:
+    - name: Install rust(up) # noqa command-instead-of-module
+      ansible.builtin.shell:
         cmd: curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
         creates: ~/.cargo/bin/rustup
       async: 120
@@ -65,22 +67,25 @@
       register: rustup
       tags: [rust]
 
-    - import_tasks: "../tasks/dotfiles.yml"
+    - name: Handle dotfiles
+      ansible.builtin.import_tasks: "../tasks/dotfiles.yml"
       tags: [dotfiles]
-    - import_tasks: "../tasks/scripts.yml"
+
+    - name: Handle scripts
+      ansible.builtin.import_tasks: "../tasks/scripts.yml"
       tags: [scripts]
 
-    - name: wait for rust
-      async_status:
+    - name: Wait for rust
+      ansible.builtin.async_status:
         jid: "{{ rustup.ansible_job_id }}"
       register: rustup_result
       until: rustup_result.finished
       retries: 30
       delay: 5
       tags: [rust]
-    
-    - name: install current-kube-context
-      command:
+
+    - name: Install current-kube-context
+      ansible.builtin.command:
         cmd: cargo install --git https://github.com/KevinMGranger/rukube/ current-kube-context
         creates: ~/.cargo/bin/current-kube-context
       async: 150
@@ -89,8 +94,8 @@
       tags: [kube-ctx]
       when: "'kubernauts' in group_names"
 
-    - name: wait for packages to be installed
-      async_status:
+    - name: Wait for packages to be installed
+      ansible.builtin.async_status:
         jid: "{{ pkg_install.ansible_job_id }}"
       register: pkg_install_result
       until: pkg_install_result.finished
@@ -99,11 +104,12 @@
       become: "{{ ansible_os_family != 'Darwin' }}"
       tags: [fishy, pkg]
 
-    - import_tasks: "../tasks/fish-as-default.yml"
+    - name: Set fish to default shell
+      ansible.builtin.import_tasks: "../tasks/fish-as-default.yml"
       tags: [fishy]
 
-    - name: wait for kube-ctx
-      async_status:
+    - name: Wait for kube-ctx
+      ansible.builtin.async_status:
         jid: "{{ kube_ctx.ansible_job_id }}"
       register: kube_ctx_result
       until: kube_ctx_result.finished
