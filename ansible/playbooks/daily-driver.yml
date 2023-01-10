@@ -41,7 +41,19 @@
       - neovim
       - python3.11
       - python3-hvac
+    retired_packages_darwin:
+      - dnsmasq
+      - python@3.8
+    retired_packages: []
+    retired_packages_redhat: []
   tasks:
+    - name: Remove old packages
+      ansible.builtin.package:
+        name: "{{ packages + vars['retired_packages_' + (ansible_os_family | lower)] }}"
+        state: absent
+      become: "{{ ansible_os_family != 'Darwin' }}"
+      tags: [pkg]
+
     - name: Install packages
       ansible.builtin.package:
         name: "{{ packages + vars['packages_' + (ansible_os_family | lower)] }}"
