@@ -51,13 +51,6 @@
       become: "{{ ansible_os_family != 'Darwin' }}"
       tags: [pkg]
 
-    - name: Link python
-      community.general.homebrew:
-        name: python@3.11
-        state: linked
-      when: ansible_os_family == 'Darwin'
-      tags: [pkg]
-
     - name: Install rust(up) # noqa command-instead-of-module
       ansible.builtin.shell:
         cmd: curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
