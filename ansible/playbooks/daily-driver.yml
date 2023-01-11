@@ -42,6 +42,7 @@
       - tokei
       - tailscale
       - vault
+      - git-delta
     packages_redhat:
       - ripgrep
       - fd-find
