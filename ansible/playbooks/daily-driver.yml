@@ -20,6 +20,7 @@
       - httpie
       - podman
       - tmux
+      - just
     packages_darwin:
       - rg
       - fd
@@ -42,7 +43,6 @@
       - tailscale
       - vault
     packages_redhat:
-      - just
       - ripgrep
       - fd-find
       - neovim
