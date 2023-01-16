@@ -4,7 +4,8 @@
     default_dir_perms: u=rwx,g=,o=
     default_file_perms: u=rw,g=,o=
     default_script_perms: u=rwx,g=,o=
-    # python_packages:
+    python_packages:
+      - ansible-lint
     #   - requests
     #   - attrs
     #   - cryptography
@@ -21,6 +22,7 @@
       - podman
       - tmux
       - just
+      - ansible
     packages_darwin:
       - rg
       - fd
@@ -32,8 +34,6 @@
       - python@3.11
       - jq
       - tree
-      - ansible
-      - ansible-lint
       - moreutils
       - watch
       - node
@@ -68,6 +68,13 @@
       async: 300 # 5 minutes
       poll: 0
       register: pkg_install
+      become: "{{ ansible_os_family != 'Darwin' }}"
+      tags: [pkg]
+
+    - name: Install system python packages (mac only for now)
+      ansible.builtin.pip:
+        name: "{{ python_packages }}"
+      when: "ansible_os_family == 'Darwin'"
       become: "{{ ansible_os_family != 'Darwin' }}"
       tags: [pkg]
 
