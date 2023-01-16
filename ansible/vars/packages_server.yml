@@ -1,0 +1,11 @@
+packages_server:
+  - htop
+  - fish
+  - exa
+  - bat
+  - git
+  - tmux
+  - ansible
+  - fd-find
+  - neovim
+retired_packages_server: []
