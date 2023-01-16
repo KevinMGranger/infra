@@ -4,6 +4,9 @@
     default_dir_perms: u=rwx,g=,o=
     default_file_perms: u=rw,g=,o=
     default_script_perms: u=rwx,g=,o=
+
+    do_kube_setup: "{{ do_kube_setup | default('kubernauts' in group_names) }}"
+
     python_packages:
       - ansible-lint
     #   - requests
@@ -27,7 +30,6 @@
       - rg
       - fd
       - nvim
-      - mockoon
       - tokei
       - python@3.9
       - python@3.10
@@ -43,6 +45,10 @@
       - tailscale
       - vault
       - git-delta
+    packages_darwin_casks:
+      - mockoon
+      - powershell
+      - visual-studio-code
     packages_redhat:
       - ripgrep
       - fd-find
@@ -57,7 +63,7 @@
   tasks:
     - name: Remove old packages
       ansible.builtin.package:
-        name: "{{ packages + vars['retired_packages_' + (ansible_os_family | lower)] }}"
+        name: "{{ retired_packages + vars['retired_packages_' + (ansible_os_family | lower)] }}"
         state: absent
       become: "{{ ansible_os_family != 'Darwin' }}"
       tags: [pkg]
@@ -69,6 +75,16 @@
       poll: 0
       register: pkg_install
       become: "{{ ansible_os_family != 'Darwin' }}"
+      tags: [pkg]
+
+    - name: Install casks
+      community.general.homebrew_cask:
+        name: "{{ packages_darwin_casks }}"
+      async: 300 # 5 minutes
+      poll: 0
+      register: cask_install
+      become: false
+      when: "ansible_os_family == 'Darwin'"
       tags: [pkg]
 
     - name: Install system python packages (mac only for now)
@@ -91,6 +107,13 @@
       ansible.builtin.import_tasks: "../tasks/dotfiles.yml"
       tags: [dotfiles]
 
+    - name: Copy kube ctx fish prompt part
+      ansible.builtin.copy:
+        mode: "{{ default_file_perms }}"
+        src: ../../fish_extra/05-kubernetes-prompt.fish
+        dest: ~/.config/fish/conf.d/_manual_source/prompt_parts.d/
+      when: do_kube_setup
+
     - name: Handle scripts
       ansible.builtin.import_tasks: "../tasks/scripts.yml"
       tags: [scripts]
@@ -112,7 +135,7 @@
       poll: 0
       register: kube_ctx
       tags: [kube-ctx]
-      when: "'kubernauts' in group_names"
+      when: do_kube_setup
 
     - name: Wait for packages to be installed
       ansible.builtin.async_status:
@@ -122,6 +145,16 @@
       retries: 30
       delay: 5
       become: "{{ ansible_os_family != 'Darwin' }}"
+      tags: [fishy, pkg]
+
+    - name: Wait for casks to be installed
+      ansible.builtin.async_status:
+        jid: "{{ cask_install.ansible_job_id }}"
+      register: cask_install_result
+      until: cask_install_result.finished
+      retries: 30
+      delay: 5
+      become: false
       tags: [fishy, pkg]
 
     - name: Set fish to default shell
@@ -136,4 +169,4 @@
       retries: 30
       delay: 5
       tags: [kube-ctx]
-      when: "'kubernauts' in group_names"
+      when: kube_ctk_result is defined
