@@ -1,19 +1,19 @@
 - name: Copy into ~/.config
-  copy:
+  ansible.builtin.copy:
     src: ../../config-files/config/
     dest: ~/.config
     directory_mode: "{{ default_dir_perms }}"
     mode: preserve
-    backup: yes
+    backup: true
 
 - name: Copy emoji config
-  template:
+  ansible.builtin.template:
     src: ../../config-files/fish_extra/01_emoji_prompt.fish.j2
     dest: ~/.config/fish/conf.d/01_emoji_prompt.fish
 
 - name: Copy mac fish config
   when: ansible_system == "Darwin"
-  copy:
+  ansible.builtin.copy:
     src: ../../config-files/fish_extra/mac.fish
     dest: ~/.config/fish/conf.d/
     mode: preserve

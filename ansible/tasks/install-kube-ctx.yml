@@ -1,9 +1,0 @@
-- name: Copy kube ctx fish prompt part
-  copy:
-    src: ../../fish_extra/05-kubernetes-prompt.fish
-    dest: ~/.config/fish/conf.d/_manual_source/prompt_parts.d/
-
-- name: Install current-kube-context
-  command:
-    cmd: cargo install --git https://github.com/KevinMGranger/rukube/ current-kube-context
-    creates: ~/.cargo/bin/current-kube-context

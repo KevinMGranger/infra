@@ -1,18 +1,19 @@
-- name: get fish path
-  command: which fish
+- name: Get fish path
+  ansible.builtin.command: which fish
+  changed_when: false
   register: fish_path_output
   tags: [become]
 
-- name: ensure fish presence in /etc/shells
-  become: yes
-  lineinfile:
+- name: Ensure fish presence in /etc/shells
+  become: true
+  ansible.builtin.lineinfile:
     line: "{{ fish_path_output.stdout }}"
     path: /etc/shells
   tags: [become]
 
-- name: set shell
-  become: yes
-  user:
+- name: Set shell
+  become: true
+  ansible.builtin.user:
     name: kevin
     shell: "{{ fish_path_output.stdout }}"
   tags: [become]
