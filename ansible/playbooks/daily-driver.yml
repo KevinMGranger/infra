@@ -110,9 +110,10 @@
     - name: Copy kube ctx fish prompt part
       ansible.builtin.copy:
         mode: "{{ default_file_perms }}"
-        src: ../../fish_extra/05-kubernetes-prompt.fish
+        src: ../../config-files/fish_extra/05-kubernetes-prompt.fish
         dest: ~/.config/fish/conf.d/_manual_source/prompt_parts.d/
       when: do_kube_setup
+      tags: [kube-ctx]
 
     - name: Handle scripts
       ansible.builtin.import_tasks: "../tasks/scripts.yml"
