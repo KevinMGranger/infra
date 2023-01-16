@@ -2,6 +2,7 @@ eval (/opt/homebrew/bin/brew shellenv)
 
 alias bup "brew upgrade"
 
+
 # > Unversioned and major-versioned symlinks `python`, `python3`, `python-config`, `python3-config`, `pip`, `pip3`, etc. pointing to
 # `python3.11`, `python3.11-config`, `pip3.11` etc., respectively, have been installed into
 # > /opt/homebrew/opt/python@3.11/libexec/bin
@@ -24,3 +25,5 @@ for python in /opt/homebrew/opt/python@3.*/libexec/bin
 end
 
 alias tailscale /Applications/Tailscale.app/Contents/MacOS/Tailscale
+
+abbr -a ansible-playbook OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES ansible-playbook
