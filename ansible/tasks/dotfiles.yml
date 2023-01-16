@@ -1,4 +1,4 @@
-- name: copy into ~/.config
+- name: Copy into ~/.config
   copy:
     src: ../../config-files/config/
     dest: ~/.config
@@ -6,14 +6,14 @@
     mode: preserve
     backup: yes
 
-- name: copy emoji config
+- name: Copy emoji config
   template:
-    src: ../../config-files/01_emoji_prompt.fish.j2
+    src: ../../config-files/fish_extra/01_emoji_prompt.fish.j2
     dest: ~/.config/fish/conf.d/01_emoji_prompt.fish
 
-- name: copy mac fish config
+- name: Copy mac fish config
   when: ansible_system == "Darwin"
   copy:
-    src: ../../config-files/mac.fish
+    src: ../../config-files/fish_extra/mac.fish
     dest: ~/.config/fish/conf.d/
     mode: preserve
