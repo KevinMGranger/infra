@@ -5,7 +5,8 @@
     default_file_perms: u=rw,g=,o=
     default_script_perms: u=rwx,g=,o=
 
-    do_kube_setup: "{{ do_kube_setup | default('kubernauts' in group_names) }}"
+    _do_kube_setup: "{{ do_kube_setup | default('kubernauts' in group_names) }}"
+    _install_rust: "{{ install_rust | default('rusty' in group_names) }}"
 
     python_packages:
       - ansible-lint
@@ -102,6 +103,7 @@
       poll: 0
       register: rustup
       tags: [rust]
+      when: _install_rust
 
     - name: Handle dotfiles
       ansible.builtin.import_tasks: "../tasks/dotfiles.yml"
@@ -112,7 +114,7 @@
         mode: "{{ default_file_perms }}"
         src: ../../config-files/fish_extra/05-kubernetes-prompt.fish
         dest: ~/.config/fish/conf.d/_manual_source/prompt_parts.d/
-      when: do_kube_setup
+      when: _do_kube_setup
       tags: [kube-ctx]
 
     - name: Handle scripts
@@ -127,6 +129,7 @@
       retries: 30
       delay: 5
       tags: [rust]
+      when: rustup_result is defined
 
     - name: Install current-kube-context
       ansible.builtin.command:
@@ -136,7 +139,7 @@
       poll: 0
       register: kube_ctx
       tags: [kube-ctx]
-      when: do_kube_setup
+      when: _do_kube_setup
 
     - name: Wait for packages to be installed
       ansible.builtin.async_status:
@@ -157,6 +160,7 @@
       delay: 5
       become: false
       tags: [fishy, pkg]
+      when: "ansible_os_family == 'Darwin'"
 
     - name: Set fish to default shell
       ansible.builtin.import_tasks: "../tasks/fish-as-default.yml"
