@@ -26,4 +26,6 @@ end
 
 alias tailscale /Applications/Tailscale.app/Contents/MacOS/Tailscale
 
-abbr -a ansible-playbook OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES ansible-playbook
+function ans --wraps ansible-playbook -d "run ansible-playbook with the obj c mac fix"
+    OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES ansible-playbook $argv
+end
