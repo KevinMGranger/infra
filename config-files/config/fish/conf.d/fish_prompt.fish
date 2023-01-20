@@ -1,3 +1,5 @@
+set -g _fish_prompt_parts_dir "$(status dirname)/_manual_source/prompt_parts.d"
+
 function fish_prompt --description 'Write out the prompt'
     set stat $pipestatus
 
@@ -8,8 +10,8 @@ function fish_prompt --description 'Write out the prompt'
 
     set -e prompt_parts
 
-    for file in (status dirname)/_manual_source/prompt_parts.d/*.fish
-        source $file
+    for file in "$_fish_prompt_parts_dir"/*.fish
+        source "$file"
     end
 
     echo (string join ' ' $prompt_parts)
