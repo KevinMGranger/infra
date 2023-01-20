@@ -7,4 +7,4 @@ else
     set kube_ctx $not_installed
 end
 
-set -a prompt_parts "☸️ $kube_ctx"
+set -a prompt_parts "☸️  $kube_ctx"
