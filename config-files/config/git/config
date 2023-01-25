@@ -27,7 +27,7 @@
 	oops = commit --amend --no-edit
 	whoops = commit -a --no-edit --amend
 	save = commit --no-edit --allow-empty-message
-	cnv = commit --no-verify
+	cnvs = commit --no-verify -s
 
 	root = rev-parse --show-toplevel
 

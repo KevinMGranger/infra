@@ -1,5 +1,6 @@
-/.vscode
+.vscode
 *.iml
 .idea
 target
-/.venv
+.venv
+local
