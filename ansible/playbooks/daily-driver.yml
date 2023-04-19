@@ -49,6 +49,7 @@
       - openshift-cli
       - kubectl
       - helm
+      - skopeo
     packages_darwin_casks:
       - mockoon
       - powershell
