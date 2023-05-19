@@ -7,10 +7,11 @@
       disk-size: 128 # gb
       cpus: 16
       consent-telemetry: "yes"
+      enable-cluster-monitoring: "true"
     pull_secret_path: "{{ ansible_env.HOME }}/crc_pull_secret"
   vars_prompt:
     - name: pull_secret
-      prompt: "Pull secret?"
+      prompt: "Pull secret? (press enter / use blank to skip pull secret setup)"
   tasks:
     - name: Set CRC config items
       ansible.builtin.command:
@@ -23,11 +24,12 @@
       ansible.builtin.copy:
         dest: "{{ pull_secret_path }}"
         mode: u=r
-        state: present
         content: "{{ pull_secret }}"
+      when: pull_secret != ""
 
     - name: Set pull secret path in config
       ansible.builtin.command:
         cmd: crc
         argv: [config, set, "pull-secret-file", "{{ pull_secret_path }}"]
       changed_when: true
+      when: pull_secret != ""
