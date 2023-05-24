@@ -10,7 +10,7 @@ spec:
   source: redhat-operators 
   sourceNamespace: openshift-marketplace 
 ---
-apiVersion: project.openshift.io/v1
-kind: ProjectRequest
+apiVersion: v1
+kind: Namespace
 metadata:
   name: devspaces

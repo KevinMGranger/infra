@@ -1,0 +1,23 @@
+- name: Set up Dev Spaces
+  hosts: localhost
+  vars:
+    k8s_host: https://api.crc.testing:6443
+  tasks:
+    - name: Create devspaces namespace and operator subscription
+      kubernetes.core.k8s:
+        apply: true
+        host: "{{ k8s_host }}"
+        src: ../../openshift/devspaces-operator-namespace.yaml
+
+    - name: Wait until Che CRD is ready
+      kubernetes.core.k8s_cluster_info:
+      register: cluster_info
+      until: cluster_info.apis['org.eclipse.che/v2'].CheCluster is defined
+      retries: 10
+      delay: 10
+
+    - name: Configure the Che Cluster
+      kubernetes.core.k8s:
+        apply: true
+        host: "{{ k8s_host }}"
+        src: ../../openshift/devspaces-checluster.yaml
