@@ -61,6 +61,7 @@
       - neovim
       - python3.11
       - python3-hvac
+      - dnf-plugin-system-upgrade
     retired_packages_darwin:
       - dnsmasq
       - python@3.8
