@@ -181,3 +181,10 @@
       delay: 5
       tags: [kube-ctx]
       when: kube_ctk_result is defined
+
+- name: Install vm-specific deps
+  hosts: vm_runners
+  tasks:
+    - name: Install vm items
+      ansible.builtin.package:
+        name: [guestfs-tools]
