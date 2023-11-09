@@ -58,6 +58,22 @@
       notify:
         - Reload firewalld
 
+    # TODO: if this doesn't get put in, you could get cut off.
+    # is there a danger zone here?
+    # is the lack of temporary zones a limitation
+    # of firewalld or just the ansible binding?
+
+    - name: Add ssh to tailscale interface
+      ansible.posix.firewalld:
+        zone: tail
+        service: ssh
+        permanent: true
+        state: enabled
+      become: true
+      tags: [network]
+      notify:
+        - Reload firewalld
+
   handlers:
     - name: Reload firewalld
       ansible.builtin.command: firewall-cmd --reload
