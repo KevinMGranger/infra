@@ -1,4 +1,5 @@
-set -g _fish_prompt_parts_dir "$(status dirname)/_manual_source/prompt_parts.d"
+set -l _dirname (status dirname)
+set -g _fish_prompt_parts_dir "$_dirname/_manual_source/prompt_parts.d"
 
 function fish_prompt --description 'Write out the prompt'
     set stat $pipestatus

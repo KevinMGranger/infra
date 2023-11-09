@@ -13,7 +13,7 @@ set -l whomst "$blue$USER@$host"
 
 set -a prompt_parts "[$time]" $whomst $emoji "$cwd_color$pwd"
 
-set -f any_failed 0
+set -l any_failed 0
 set -l colored_pipe_parts (for s in $stat
         if test $s -ne 0
             set any_failed 1
