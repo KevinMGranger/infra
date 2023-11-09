@@ -7,7 +7,7 @@ set -l cwd_color (set_color $fish_color_cwd)
 
 set -l time (date +'%G-%m-%d %H:%M:%S')
 set -l host (prompt_hostname)
-set -l pwd (prompt_pwd --dir-length=0)
+set -l pwd (prompt_pwd)
 
 set -l whomst "$blue$USER@$host"
 
