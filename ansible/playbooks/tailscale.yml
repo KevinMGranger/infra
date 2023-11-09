@@ -1,0 +1,64 @@
+- name: Set up tailscale for the first time on a machine
+  hosts: all
+  vars_prompt:
+    - name: tailscale_auth_key
+      prompt: What is the tailscale auth key? Leave blank if not authenticating
+      private: true
+  tasks:
+    - name: Set up tailscale repo
+      ansible.builtin.get_url:
+        url: https://pkgs.tailscale.com/stable/fedora/tailscale.repo
+        dest: /etc/yum.repos.d/tailscale.repo
+        mode: u=rw,g=r,o=r
+      become: true
+      tags: [install]
+
+    - name: Install tailscale
+      ansible.builtin.package:
+        name: tailscale
+      become: true
+      tags: [install]
+
+    - name: Enable and start tailscaled
+      ansible.builtin.systemd_service:
+        name: tailscaled
+        enabled: true
+        state: started
+      tags: [install]
+
+    - name: Connect to tailscale
+      ansible.builtin.command:
+        argv:
+          - tailscale
+          - up
+          - --accept-dns
+          - --auth-key
+          - "{{ tailscale_auth_key }}"
+      tags: [auth]
+      when: tailscale_auth_key | default(false, true)
+
+    - name: Create firewalld zone
+      ansible.posix.firewalld:
+        zone: tail
+        permanent: true
+        state: present
+      become: true
+      tags: [network]
+      notify:
+        - Reload firewalld
+
+    - name: Add tailscale interface to tail zone
+      ansible.posix.firewalld:
+        zone: tail
+        interface: tailscale0
+        permanent: true
+        state: enabled
+      become: true
+      tags: [network]
+      notify:
+        - Reload firewalld
+
+  handlers:
+    - name: Reload firewalld
+      ansible.builtin.command: firewall-cmd --reload
+      become: true
