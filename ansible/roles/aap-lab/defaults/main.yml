@@ -1,2 +1,6 @@
 ---
-# defaults file for aap-lab
+rhel_image_dl_name: "{{ (rhel_image_url | urlsplit('path')).split('/')[-1] }}"
+libvirt_images_path: /var/lib/libvirt/images/
+rhel_image_dl_path: "{{ libvirt_images_path }}/{{ rhel_image_dl_name }}"
+rhel_download_become: true
+rhel_root_password: tahder
