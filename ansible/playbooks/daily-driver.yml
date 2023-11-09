@@ -15,18 +15,26 @@
     #   - cryptography
     #   - hvac
     #   - click
+
+    # TODO: organize all these, probably
+    # off of _distribution instead of os_family.
+    # could have separate linux one for common
     packages:
       - htop
       - fish
       - exa
       - bat
       - git
-      - gh
-      - httpie
       - podman
       - tmux
-      - just
       - ansible
+    packages_linux:
+      - ripgrep
+      - fd-find
+      - neovim
+      - python3.11
+      - python3-hvac
+      - dnf-plugin-system-upgrade
     packages_darwin:
       - rg
       - fd
@@ -35,6 +43,7 @@
       - python@3.9
       - python@3.10
       - python@3.11
+      - python@3.12
       - jq
       - yq
       - tree
@@ -51,23 +60,31 @@
       - kubectl
       - helm
       - skopeo
+      - just
+      - gh
+      - httpie
     packages_darwin_casks:
       - mockoon
       - powershell
       - visual-studio-code
-    packages_redhat:
-      - ripgrep
-      - fd-find
-      - neovim
-      - python3.11
-      - python3-hvac
-      - dnf-plugin-system-upgrade
+    packages_fedora:
+      - gh
+      - just
+      - httpie
+    packages_redhat: []
     retired_packages_darwin:
       - dnsmasq
       - python@3.8
     retired_packages: []
     retired_packages_redhat: []
   tasks:
+    # TODO: only worked manually?
+    # - name: Install EPEL if rhel 9
+    #   ansible.builtin.package:
+    #     name: "https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm"
+    #   become: true
+    #   when: ansible_distribution == "RedHat" and ansible_distribution_major_version == "9"
+
     - name: Remove old packages
       ansible.builtin.package:
         name: "{{ retired_packages + vars['retired_packages_' + (ansible_os_family | lower)] }}"
@@ -77,12 +94,15 @@
 
     - name: Install packages
       ansible.builtin.package:
-        name: "{{ packages + vars['packages_' + (ansible_os_family | lower)] }}"
+        name: "{{ (packages + sys_pkgs + dist_pkgs) | unique }}"
       async: 300 # 5 minutes
       poll: 0
       register: pkg_install
       become: "{{ ansible_os_family != 'Darwin' }}"
       tags: [pkg]
+      vars:
+        sys_pkgs: "{{ vars['packages_' + (ansible_system | lower)] }}"
+        dist_pkgs: "{{ vars['packages_' + (ansible_distribution | lower)] }}"
 
     - name: Install casks
       community.general.homebrew_cask:
