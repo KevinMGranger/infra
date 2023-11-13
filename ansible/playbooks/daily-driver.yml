@@ -7,6 +7,8 @@
 
     _do_kube_setup: "{{ do_kube_setup | default('kubernauts' in group_names) }}"
     _install_rust: "{{ install_rust | default('rusty' in group_names) }}"
+    _is_not_mac: "{{ ansible_os_family != 'Darwin' }}"
+    _is_mac: "{{ ansible_os_family == 'Darwin' }}"
 
     python_packages:
       - ansible-lint
@@ -29,7 +31,7 @@
       ansible.builtin.package:
         name: "{{ retired_packages + vars['retired_packages_' + (ansible_os_family | lower)] }}"
         state: absent
-      become: "{{ ansible_os_family != 'Darwin' }}"
+      become: "{{ _is_not_mac }}"
       tags: [pkg]
 
     - name: Install packages
@@ -38,7 +40,7 @@
       async: 300 # 5 minutes
       poll: 0
       register: pkg_install
-      become: "{{ ansible_os_family != 'Darwin' }}"
+      become: "{{ _is_not_mac }}"
       tags: [pkg]
       vars:
         sys_pkgs: "{{ vars['packages_' + (ansible_system | lower)] }}"
@@ -51,13 +53,13 @@
       poll: 0
       register: cask_install
       become: false
-      when: "ansible_os_family == 'Darwin'"
+      when: _is_mac
       tags: [pkg]
 
     - name: Install system python packages (mac only for now)
       ansible.builtin.pip:
         name: "{{ python_packages }}"
-      when: "ansible_os_family == 'Darwin'"
+      when: _is_mac
       become: "{{ ansible_os_family != 'Darwin' }}"
       tags: [pkg]
 
@@ -126,7 +128,7 @@
       delay: 5
       become: false
       tags: [fishy, pkg]
-      when: "ansible_os_family == 'Darwin'"
+      when: _is_mac
 
     - name: Set fish to default shell
       ansible.builtin.import_tasks: "../tasks/fish-as-default.yml"
