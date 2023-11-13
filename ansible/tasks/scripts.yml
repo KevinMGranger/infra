@@ -1,13 +1,13 @@
-- name: ensure ~/.local exists
-  file:
+- name: Ensure ~/.local exists
+  ansible.builtin.file:
     path: ~/.local
     state: directory
     mode: u=rwx,g=,o=
 
-- name: copy into ~/.local/bin
-  copy:
+- name: Copy into ~/.local/bin
+  ansible.builtin.copy:
     src: ../../tools/scripts/
     dest: ~/.local/bin
     directory_mode: "{{ default_dir_perms }}"
     mode: preserve
-    backup: yes
+    backup: true
