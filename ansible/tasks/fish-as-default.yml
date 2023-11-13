@@ -11,6 +11,14 @@
     path: /etc/shells
   tags: [become]
 
+- name: Make sure sbin is in path on RHEL
+  become: true
+  ansible.builtin.lineinfile:
+    line: fish_add_path /usr/sbin
+    path: /etc/fish/config.fish
+  tags: [become]
+  when: ansible_distribution == "RedHat" and ansible_distribution_major_version == "9"
+
 - name: Set shell
   become: true
   ansible.builtin.user:
