@@ -17,12 +17,13 @@
     #   - click
   vars_files: [../vars/packages.yml]
   tasks:
-    # TODO: only worked manually?
-    # - name: Install EPEL if rhel 9
-    #   ansible.builtin.package:
-    #     name: "https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm"
-    #   become: true
-    #   when: ansible_distribution == "RedHat" and ansible_distribution_major_version == "9"
+    - name: Install EPEL if rhel 9
+      ansible.builtin.command:
+        argv: [dnf, -y, install, https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm]
+      # ansible.builtin.package:
+      #   name: "https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm"
+      become: true
+      when: ansible_distribution == "RedHat" and ansible_distribution_major_version == "9"
 
     - name: Remove old packages
       ansible.builtin.package:
