@@ -11,6 +11,7 @@
     src: ../../config-files/fish_extra/01_emoji_prompt.fish.j2
     dest: ~/.config/fish/conf.d/01_emoji_prompt.fish
     mode: preserve
+  when: emoji is defined
 
 - name: Copy mac fish config
   when: ansible_system == "Darwin"
