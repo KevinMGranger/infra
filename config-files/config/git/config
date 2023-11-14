@@ -35,3 +35,7 @@
 
     ; wheeeere's your heeeeaaaad at at
 	wyha = rev-parse --abbrev-ref HEAD
+
+	; gh wrappers
+	repo-url = !gh repo view --json url --jq .url
+	new-repo = !bash -c 'gh repo create "$(basename "$PWD")" "$@"' --
