@@ -11,6 +11,7 @@ packages: # same names on any target
   - podman
   - tmux
   - ansible
+  - lnav
 packages_linux: # same names on any linux target
   - ripgrep
   - fd-find
