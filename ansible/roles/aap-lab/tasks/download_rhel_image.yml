@@ -12,15 +12,16 @@
 # TODO: libvirt errors for some reason?
 # maybe we need to define a domain around it?
 # weird cuz it says it needs to be shut down
+# it worked this time???
 # 
-# - name: Set root password
-#   ansible.builtin.command:
-#     argv:
-#       - virt-customize
-#       - "-a"
-#       - "{{ rhel_image_dl_path }}"
-#       - "--root-password"
-#       - "password:{{ rhel_root_password }}"
+- name: Set root password
+  ansible.builtin.command:
+    argv:
+      - virt-customize
+      - "-a"
+      - "{{ rhel_image_dl_path }}"
+      - "--root-password"
+      - "password:{{ rhel_root_password }}"
 
 - name: Set as readonly
   ansible.builtin.file:

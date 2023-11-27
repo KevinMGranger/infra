@@ -1,0 +1,25 @@
+---
+# - name: Download Image
+#   ansible.builtin.include_tasks: "download_rhel_image.yml"
+#   tags: rhel-image
+
+# /usr/bin/virt-install --name aap-tower-host --memory 16384 --vcpus 4 --import --disk pool=images,size=80,backing_store=/var/lib/libvirt/images/rhel-9.2-x86_64-kvm.qcow2 --osinfo name=rhel9.2
+
+- name: Define VM
+  become: true
+  ansible.builtin.command:
+    argv:
+      - virt-install
+      - --name
+      - "{{ item.name }}"
+      - --memory
+      - '{{ (item.memory | human_to_bytes(default_unit="G") | human_readable(unit="M"))[:-3] | int }}'
+      - --vcpus
+      - "{{ item.cpus }}"
+      # - "--import" # this made it transient, why did I have this again?
+      - --disk
+      - pool=images,size={{ item.disk_size_gib }},backing_store={{ rhel_image_dl_path }}
+      - --osinfo
+      - name={{ osinfo_name }}
+  loop:
+    - { name: aap-tower-host, memory: 16 GB, cpus: 4, disk_size_gib: 80 }
