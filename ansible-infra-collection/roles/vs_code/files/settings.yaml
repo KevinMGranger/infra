@@ -18,6 +18,13 @@ vim.useSystemClipboard: true # TODO: I remember this giving issues in the past?
 # should be okay if it shares clipboard, won't need ctrl+c/v.
 # but can I remap these if already selecting?
 vim.useCtrlKeys: true 
+vim.handleKeys:
+  <C-d>: true
+  <C-s>: false
+  <C-z>: false
+  <C-a>: false
+  <C-c>: false
+  <C-v>: false
 
 files.exclude:
   '**/.git': true
