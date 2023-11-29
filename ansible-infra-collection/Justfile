@@ -1,3 +1,2 @@
-!include ../common.justfile
-
-install: (galaxy-install '.')
+install:
+    ansible-galaxy collection install --force {{ quote(justfile_directory()) }}
