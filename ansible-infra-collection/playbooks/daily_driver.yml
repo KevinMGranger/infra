@@ -1,5 +1,5 @@
 - name: Set up most things
-  hosts: daily_drivers
+  hosts: "{{ target | default('daily_drivers') }}"
   roles:
     - kmg.infra.daily_driver
 
