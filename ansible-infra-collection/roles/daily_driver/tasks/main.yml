@@ -13,8 +13,14 @@
   when: _install_rust
 
 - name: Handle dotfiles
-  ansible.builtin.import_tasks: "../tasks/dotfiles.yml"
-  tags: [dotfiles]
+  ansible.builtin.import_tasks: dotfiles.yml
+  tags: config
+
+- name: Configure VS Code
+  ansible.builtin.include_role: 
+    name: kmg.infra.vs_code
+    tasks_from: config.yaml
+  tags: config
 
 - name: Copy kube ctx fish prompt part
   ansible.builtin.copy:
