@@ -17,19 +17,20 @@ git.confirmSync: false
 vim.useSystemClipboard: true # TODO: I remember this giving issues in the past?
 # should be okay if it shares clipboard, won't need ctrl+c/v.
 # but can I remap these if already selecting?
-vim.useCtrlKeys: true 
+vim.useCtrlKeys: false 
 vim.handleKeys:
-  <C-d>: true
-  <C-s>: false
-  <C-z>: false
+  <C-q>: true # still use for visual block
+#   <C-d>: true
+#   <C-s>: false
+#   <C-z>: false
 
-  <C-a>: false
-  <C-c>: false
-  <C-v>: false
-  <C-w>: false
-  <C-p>: false
-  <C-f>: false
-  <C-x>: false
+#   <C-a>: false
+#   <C-c>: false
+#   <C-v>: false
+#   <C-w>: false
+#   <C-p>: false
+#   <C-f>: false
+#   <C-x>: false
 
 files.exclude:
   '**/.git': true
