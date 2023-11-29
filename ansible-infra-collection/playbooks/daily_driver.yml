@@ -1,7 +1,7 @@
 - name: Set up most things
   hosts: daily_drivers
   roles:
-    - daily-driver
+    - kmg.infra.daily_driver
 
 - name: Install vm-specific deps
   hosts: vm_runners
