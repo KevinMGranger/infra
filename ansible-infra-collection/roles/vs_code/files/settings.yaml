@@ -6,6 +6,10 @@ terminal.integrated.defaultProfile.linux: fish
 
 # GIT
 git.confirmSync: false
+# was supposedly a way to disable this here: https://github.com/microsoft/vscode/issues/12089
+# but can't find it in the suggestions or ui
+git.inputValidationLength: 999
+git.inputValidationSubjectLength: 999
 # TODO: ?
 #git.autofetch: true
 #git.enableSmartCommit: true
