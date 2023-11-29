@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+set -euxo pipefail
+
+tempdir="$(mktemp -d)"
+trap 'rm -r "$tempdir"' EXIT
+
+ansible-galaxy collection build --output-path "$tempdir" "$@" 
+
+ansible-galaxy collection install --force "$tempdir"/*
