@@ -1,0 +1,3 @@
+!include ../common.justfile
+
+install: (galaxy-install '.')
