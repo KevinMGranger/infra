@@ -27,6 +27,7 @@ vim.handleKeys:
   <C-c>: false
   <C-v>: false
   <C-w>: false
+  <C-p>: false
 
 files.exclude:
   '**/.git': true
