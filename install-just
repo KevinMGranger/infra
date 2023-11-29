@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if ! just_path="$(which just 2>/dev/null)"; then
+    mkdir -p ~/.local/bin
+    curl --proto '=https' --tlsv1.2 -sSf https://just.systems/install.sh | bash -s -- --to ~/.local/bin
+    if ! which just 2>/dev/null; then
+        echo "Installed successfully (I think), but it appears ~/.local/bin isn't in your PATH!" >&2
+        return 1
+    fi
+else
+    echo "just is installed to $just_path"
+fi
