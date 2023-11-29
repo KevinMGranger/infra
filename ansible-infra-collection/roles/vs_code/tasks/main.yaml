@@ -3,7 +3,10 @@
   tags: [vscode-install]
 
 - name: Configure VS Code
-  ansible.builtin.include_tasks: config.yaml
+  ansible.builtin.include_tasks:
+    file: config.yaml
+    apply:
+      tags: [vscode-config]
   tags: [vscode-config]
 
 - name: Install VS Code extensions

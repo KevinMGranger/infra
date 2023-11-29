@@ -28,3 +28,8 @@ extensions:
   - vadimcn.vscode-lldb
   - vscodevim.vim
   - wholroyd.jinja
+
+_settings_dir_by_os:
+  Linux: .config/Code/User
+  Darwin: ~/Library/Application Support/Code/User
+  WINDOWSTODO: '%AppData%\Code\User' # TODO: will % expand properly?

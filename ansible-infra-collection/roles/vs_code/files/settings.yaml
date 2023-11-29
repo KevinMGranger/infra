@@ -22,9 +22,11 @@ vim.handleKeys:
   <C-d>: true
   <C-s>: false
   <C-z>: false
+
   <C-a>: false
   <C-c>: false
   <C-v>: false
+  <C-w>: false
 
 files.exclude:
   '**/.git': true
