@@ -1,0 +1,54 @@
+# todo: json schema validation for this? is that possible?
+# can't seem to find it anywhere.
+
+# editor semantics
+terminal.integrated.defaultProfile.linux: fish
+
+# GIT
+git.confirmSync: false
+# TODO: ?
+#git.autofetch: true
+#git.enableSmartCommit: true
+
+# todo: selectively enable this by merging in ansible
+#remote.SSH.configFile: ~/.ssh/config-vscode
+
+# VIM BAYBEE
+vim.useSystemClipboard: true # TODO: I remember this giving issues in the past?
+# should be okay if it shares clipboard, won't need ctrl+c/v.
+# but can I remap these if already selecting?
+vim.useCtrlKeys: true 
+
+files.exclude:
+  '**/.git': true
+  '**/.svn': true
+  '**/.hg': true
+  '**/CVS': true
+  '**/.DS_Store': true
+  '**/Thumbs.db': true
+  '**/__pycache__': true
+  '**/*.egg-info': true
+  .pytest_cache: true
+
+# editor visuals
+window.autoDetectColorScheme: true
+workbench.colorTheme: Default Light+
+# workbench.colorTheme: Default Dark+
+editor.minimap.enabled: false
+window.zoomLevel: 1
+
+
+# extension/lang-specific
+# sqltools.useNodeRuntime: true # TODO: ?
+redhat.telemetry.enabled: true
+jupyter.askForKernelRestart: false
+ansibleServer.trace.server: messages
+markdown-table-formatter.markdownGrammarScopes:
+  - markdown
+  - python
+'[python]':
+  editor.defaultFormatter: ms-python.python
+  python.analysis.typeCheckingMode: basic
+  #python.linting.pylamaEnabled: true # ?
+'[rust]':
+  rust-analyzer.checkOnSave.command: clippy

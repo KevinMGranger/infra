@@ -1,0 +1,4 @@
+- name: Install vs code extensions
+  command: code --install-extension {{ extensions | join(' --install-extension ') }}
+  register: vscode_ext_install
+  changed_when: "'was successfully installed' in vscode_ext_install.stdout"

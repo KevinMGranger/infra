@@ -1,0 +1,20 @@
+- name: SSH Config File
+  when: "'vscode_remotes' in groups"
+  template:
+    dest: ~/.ssh/config-vscode
+    src: ../../config-files/vscode/ssh_config
+  tags: [vscode-ssh-config]
+
+- name: Copy config file
+  copy:
+    # TODO: merging others
+    content: "{{ vs_code_settings | to_json }}"
+    dest: "{{ config_dir | default(_settings_dir_by_os[ansible_os_family]) }}/settings.json"
+    directory_mode: u=rwx,g=,o=
+    mode: preserve
+    backup: true
+  vars:
+    # TODO: look up windows path
+    _settings_dir_by_os:
+      Darwin: "~/Library/Application Support/Code/User"
+      WINDOWSTODO: '%AppData%\Code\User\' # TODO: will % expand properly?

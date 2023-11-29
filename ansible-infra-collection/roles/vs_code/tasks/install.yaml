@@ -1,0 +1,29 @@
+- name: Set up rpm_key if on RedHat
+  when: ansible_os_family == "RedHat"
+  become: true
+  rpm_key:
+    key: https://packages.microsoft.com/keys/microsoft.asc
+
+- name: Set up repo if on RedHat
+  when: ansible_os_family == "RedHat"
+  become: true
+  copy:
+    content: |
+      [code]
+      name=Visual Studio Code
+      baseurl=https://packages.microsoft.com/yumrepos/vscode
+      enabled=1
+      gpgcheck=1
+      gpgkey=https://packages.microsoft.com/keys/microsoft.asc"
+    dest: /etc/yum.repos.d/vscode.repo
+
+- name: Install (RedHat)
+  when: ansible_os_family == "RedHat"
+  become: true
+  package:
+    name: code
+
+- name: Install (macOS)
+  when: ansible_os_family == "Darwin"
+  community.general.homebrew_cask:
+    name: visual-studio-code

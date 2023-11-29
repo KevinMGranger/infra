@@ -1,0 +1,7 @@
+- name: Set up vs code
+  hosts: "{{ target | default('vscode_runner') }}"
+  # collections:
+  #   - kmg.infra
+  roles:
+    - kmg.infra.vs_code
+    # - vs_code
