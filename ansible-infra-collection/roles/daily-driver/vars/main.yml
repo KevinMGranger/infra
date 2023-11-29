@@ -1,0 +1,16 @@
+_do_kube_setup: "{{ do_kube_setup | default('kubernauts' in group_names) }}"
+_install_rust: "{{ install_rust | default('rusty' in group_names) }}"
+_is_not_mac: "{{ ansible_os_family != 'Darwin' }}"
+_is_mac: "{{ ansible_os_family == 'Darwin' }}"
+
+default_dir_perms: u=rwx,g=,o=
+default_file_perms: u=rw,g=,o=
+default_script_perms: u=rwx,g=,o=
+
+python_packages:
+  - ansible-lint
+#   - requests
+#   - attrs
+#   - cryptography
+#   - hvac
+#   - click

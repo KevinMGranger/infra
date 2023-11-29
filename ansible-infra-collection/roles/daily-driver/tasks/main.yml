@@ -1,0 +1,84 @@
+- name: Install packages
+  ansible.builtin.include_tasks: packages.yaml
+  tags: pkg
+
+- name: Install rust(up) # noqa command-instead-of-module
+  ansible.builtin.shell:
+    cmd: curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+    creates: ~/.cargo/bin/rustup
+  async: 120
+  poll: 0
+  register: rustup
+  tags: [rust]
+  when: _install_rust
+
+- name: Handle dotfiles
+  ansible.builtin.import_tasks: "../tasks/dotfiles.yml"
+  tags: [dotfiles]
+
+- name: Copy kube ctx fish prompt part
+  ansible.builtin.copy:
+    mode: "{{ default_file_perms }}"
+    src: ../../config-files/fish_extra/05-kubernetes-prompt.fish
+    dest: ~/.config/fish/conf.d/_manual_source/prompt_parts.d/
+  when: _do_kube_setup
+  tags: [kube-ctx]
+
+- name: Handle scripts
+  ansible.builtin.import_tasks: "../tasks/scripts.yml"
+  tags: [scripts]
+
+- name: Wait for rust
+  ansible.builtin.async_status:
+    jid: "{{ rustup.ansible_job_id }}"
+  register: rustup_result
+  until: rustup_result.finished
+  retries: 30
+  delay: 5
+  tags: [rust]
+  when: rustup_result is defined
+
+- name: Install current-kube-context
+  ansible.builtin.command:
+    cmd: cargo install --git https://github.com/KevinMGranger/rukube/ current-kube-context
+    creates: ~/.cargo/bin/current-kube-context
+  async: 150
+  poll: 0
+  register: kube_ctx
+  tags: [kube-ctx]
+  when: _do_kube_setup
+
+- name: Wait for packages to be installed
+  ansible.builtin.async_status:
+    jid: "{{ pkg_install.ansible_job_id }}"
+  register: pkg_install_result
+  until: pkg_install_result.finished
+  retries: 30
+  delay: 5
+  become: "{{ ansible_os_family != 'Darwin' }}"
+  tags: [fishy, pkg]
+
+- name: Wait for casks to be installed
+  ansible.builtin.async_status:
+    jid: "{{ cask_install.ansible_job_id }}"
+  register: cask_install_result
+  until: cask_install_result.finished
+  retries: 30
+  delay: 5
+  become: false
+  tags: [fishy, pkg]
+  when: _is_mac
+
+- name: Set fish to default shell
+  ansible.builtin.import_tasks: "../tasks/fish-as-default.yml"
+  tags: [fishy]
+
+- name: Wait for kube-ctx
+  ansible.builtin.async_status:
+    jid: "{{ kube_ctx.ansible_job_id }}"
+  register: kube_ctx_result
+  until: kube_ctx_result.finished
+  retries: 30
+  delay: 5
+  tags: [kube-ctx]
+  when: kube_ctk_result is defined

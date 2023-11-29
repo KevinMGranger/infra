@@ -1,0 +1,12 @@
+# same names on any target
+packages_common:
+- htop
+- fish
+- exa
+- bat
+- git
+- podman
+- tmux
+- ansible
+- lnav
+retired_packages_common: []

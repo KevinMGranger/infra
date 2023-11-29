@@ -1,0 +1,61 @@
+- name: Install EPEL if rhel 9
+  ansible.builtin.command:
+    argv: [dnf, -y, install, https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm]
+  # ansible.builtin.package:
+  #   name: "https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm"
+  become: true
+  when: ansible_distribution == "RedHat" and ansible_distribution_major_version == "9"
+
+- name: Remove old packages # TODO: convert to new vars logic
+  ansible.builtin.package:
+    name: "{{ retired_packages + vars['retired_packages_' + (ansible_os_family | lower)] }}"
+    state: absent
+  become: "{{ _is_not_mac }}"
+  tags: [pkg]
+
+- name: Import common packages
+  ansible.builtin.include_vars:
+    file: packages/common.yaml
+
+- name: Import distro/system-specific packages
+  ansible.builtin.include_vars:
+    # this won't cause an error if absent
+    dir: packages
+    files_matching: '{{ ansible_system }}\.yaml'
+
+- name: Combine package specifications
+  vars:
+    # system is something like linux/darwin
+    sys_pkgs: "{{ vars['packages_' + (ansible_system | lower)] | default([]) }}"
+    # distribution is something like fedora/macos
+    dist_pkgs: "{{ vars['packages_' + (ansible_distribution | lower)] | default([]) }}"
+
+    sys_skip: "{{ vars['skip_packages_' + (ansible_system | lower)] | default([]) }}"
+    dist_skip: "{{ vars['skip_packages_' + (ansible_distribution | lower)] | default([]) }}"
+
+    _dist_major_name: "{{ (ansible_distribution | lower) }}_{{ ansible_distribution_major_version }}"
+
+    major_dist_pkgs: "{{ vars['packages_' + _dist_major_name] | default([]) }}"
+    major_dist_skip: "{{ vars['skip_packages_' + _dist_major_name] | default([]) }}"
+
+    _all_pkgs: "{{ (packages_common + sys_pkgs + dist_pkgs + major_dist_pkgs) | unique }}"
+    # TODO: skip as extra var for play / CLI?
+    _all_skip: "{{ (sys_skip + dist_skip + major_dist_skip) | unique}}"
+  ansible.builtin.set_fact:
+    packages: "{{ _all_pkgs | difference(_all_skip) }}"
+
+- name: Install packages
+  ansible.builtin.package:
+    name: "{{ packages }}"
+  async: 300 # 5 minutes
+  poll: 0
+  register: pkg_install
+  become: "{{ _is_not_mac }}"
+  tags: [pkg]
+
+- name: Install system python packages (mac only for now)
+  ansible.builtin.pip:
+    name: "{{ python_packages }}"
+  when: _is_mac
+  become: "{{ ansible_os_family != 'Darwin' }}"
+  tags: [pkg]

@@ -1,0 +1,11 @@
+- name: Set up most things
+  hosts: daily_drivers
+  roles:
+    - daily-driver
+
+- name: Install vm-specific deps
+  hosts: vm_runners
+  tasks:
+    - name: Install vm items
+      ansible.builtin.package:
+        name: [guestfs-tools]

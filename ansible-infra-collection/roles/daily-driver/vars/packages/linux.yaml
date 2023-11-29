@@ -1,0 +1,17 @@
+packages_linux: # same names on any linux target
+  - ripgrep
+  - fd-find
+  - neovim
+  - python3.11
+  - python3-hvac
+  - dnf-plugin-system-upgrade
+packages_fedora:
+  - gh
+  - just
+  - httpie
+packages_redhat: [] # rhel-specific names
+retired_packages: []
+retired_packages_redhat: []
+skip_packages_redhat_8:
+  - exa
+  - bat

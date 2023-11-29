@@ -1,0 +1,35 @@
+packages_macosx:
+- rg
+- fd
+- nvim
+- tokei
+- python@3.9
+- python@3.10
+- python@3.11
+- python@3.12
+- jq
+- yq
+- tree
+- moreutils
+- watch
+- node
+- golang
+- ascii
+- tokei
+- tailscale
+- vault
+- git-delta
+- openshift-cli
+- kubectl
+- helm
+- skopeo
+- just
+- gh
+- httpie
+retired_packages_macosx:
+- dnsmasq
+- python@3.8
+packages_darwin_casks:
+- mockoon
+- powershell
+- visual-studio-code

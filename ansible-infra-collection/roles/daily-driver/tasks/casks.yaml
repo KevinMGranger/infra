@@ -1,0 +1,9 @@
+- name: Install casks
+  community.general.homebrew_cask:
+    name: "{{ packages_darwin_casks }}"
+  async: 300 # 5 minutes
+  poll: 0
+  register: cask_install
+  become: false
+  when: _is_mac
+  tags: [pkg]
