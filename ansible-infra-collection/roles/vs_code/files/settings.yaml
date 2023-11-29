@@ -28,6 +28,8 @@ vim.handleKeys:
   <C-v>: false
   <C-w>: false
   <C-p>: false
+  <C-f>: false
+  <C-x>: false
 
 files.exclude:
   '**/.git': true
