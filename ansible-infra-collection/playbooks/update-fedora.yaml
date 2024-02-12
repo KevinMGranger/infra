@@ -1,0 +1,46 @@
+- name: Update fedora to the given major release
+  hosts: fedora
+  become: true
+  vars_prompt:
+    - name: releasever
+      prompt: Fedora major release number?
+      private: false
+  tasks:
+    - name: Upgrade all current packages and reboot
+      ansible.builtin.dnf:
+        state: latest
+        update_only: true
+        update_cache: true
+      register: dnf_upgrade
+
+    - name: Pre-system-upgrade upgrade reboot # noqa: no-handler
+      ansible.builtin.reboot:
+      when: dnf_upgrade is changed
+
+    # don't know why they have you do this as a separate step
+    - name: Install system upgrade dnf plugin
+      ansible.builtin.dnf:
+        name: dnf-plugin-system-upgrade
+
+    - name: System-upgrade download
+      ansible.builtin.command:
+        argv:
+          - dnf
+          - system-upgrade
+          - download
+          - --releasever={{ releasever | int }}
+          - -y
+      changed_when: true
+
+    - name: System-upgrade reboot # noqa: no-handler
+      ansible.builtin.reboot:
+        reboot_command: dnf system-upgrade reboot -y
+        reboot_timeout: "{{ 15 * 60 }}" # seconds; 15 minutes
+
+    - name: Re-gather major version
+      ansible.builtin.setup:
+        gather_subset: distribution_major_version
+
+    - name: Assert that upgrade worked
+      ansible.builtin.assert:
+        that: ansible_distribution_major_version | int is eq(releasever | int)
