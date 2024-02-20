@@ -1,4 +1,0 @@
-- name: Deploy AAP lab
-  hosts: aap_lab
-  roles:
-    - role: ../roles/aap-lab

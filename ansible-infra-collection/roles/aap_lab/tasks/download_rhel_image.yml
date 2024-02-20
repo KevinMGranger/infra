@@ -15,7 +15,13 @@
 # it worked this time???
 # 
 
+- name: Set as readonly
+  ansible.builtin.file:
+    path: "{{ rhel_image_dl_path }}"
+    mode: u=r,g=r,o=
+
 # https://access.redhat.com/solutions/641193 says to uninstall cloud-init, but idk why
+# but that's rhel 8 and below anyway, won't do that for now.
 - name: Set root password
   ansible.builtin.command:
     argv:
@@ -24,10 +30,10 @@
       - "{{ rhel_image_dl_path }}"
       - --root-password
       - "password:{{ rhel_root_password }}"
-      - --uninstall
-      - cloud-init
+      # - --uninstall
+      # - cloud-init
 
-- name: Set as readonly
-  ansible.builtin.file:
-    path: "{{ rhel_image_dl_path }}"
-    mode: u=r,g=r,o=
+# touch /.autorelabel afterward
+# later: snapshot this after a single boot
+
+# or is this all bleh and we can just enable root login over ssh?

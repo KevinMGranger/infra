@@ -5,6 +5,9 @@
 
 # /usr/bin/virt-install --name aap-tower-host --memory 16384 --vcpus 4 --import --disk pool=images,size=80,backing_store=/var/lib/libvirt/images/rhel-9.2-x86_64-kvm.qcow2 --osinfo name=rhel9.2
 
+# looks like I have to customize and... set the first boot command to shut down,
+# cuz that's apparently what it expects.
+
 - name: Define VM
   become: true
   ansible.builtin.command:
