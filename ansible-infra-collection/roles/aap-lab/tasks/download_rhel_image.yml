@@ -14,14 +14,18 @@
 # weird cuz it says it needs to be shut down
 # it worked this time???
 # 
+
+# https://access.redhat.com/solutions/641193 says to uninstall cloud-init, but idk why
 - name: Set root password
   ansible.builtin.command:
     argv:
       - virt-customize
-      - "-a"
+      - -a
       - "{{ rhel_image_dl_path }}"
-      - "--root-password"
+      - --root-password
       - "password:{{ rhel_root_password }}"
+      - --uninstall
+      - cloud-init
 
 - name: Set as readonly
   ansible.builtin.file:
