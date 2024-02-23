@@ -1,0 +1,8 @@
+- name: Update tailscale on all unix devices
+  hosts: [linux, macos]
+  tasks:
+    - name: Update tailscale # noqa package-latest
+      ansible.builtin.package:
+        name: tailscale
+        state: latest
+      become: "{{ ansible_os_family != 'Darwin' }}"
