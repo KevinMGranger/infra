@@ -1,0 +1,33 @@
+- name: Create tempfile for cloud-init
+  ansible.builtin.tempfile:
+    prefix: cloud-init
+    suffix: .yaml
+  register: cloud_init_tempfile
+
+- name: Add to tempfiles list
+  ansible.builtin.set_fact:
+    tempfiles: "{{ tempfiles + [cloud_init_tempfile.path] }}"
+  when: clean_up_cloud_init | default(true)
+  notify: Remove tempfiles
+
+- name: Write cloud-init data
+  ansible.builtin.file:
+    path: "{{ cloud_init_tempfile.path }}"
+    content: "{{ cloud_init_content | to_yaml }}"
+
+- name: Create vm
+  ansible.builtin.command:
+    argv: "{{ ['virt-install'] + (args | items | flatten)}}"
+    creates: /etc/libvirt/qemu/{{ vm_name }}.xml
+  vars:
+    _ram: >-
+      {{ ( memory | human_to_bytes(default_unit="G") | human_readable(unit="M"))[:-3] | int }}
+    args:
+      --name: "{{ vm_name }}"
+      --memory: "{{ _ram }}"
+      --vcpus: "{{ cpus }}"
+      --disk: "pool=images,size={{ disk_gb }},backing_store={{ rhel_image_dl_path }}"
+      --os-variant: rhel9.3 # TODO: parameterize
+      --cloud-init: user-data={{ cloud_init_tempfile.path }}
+      --noreboot:
+      --noautoconsole:

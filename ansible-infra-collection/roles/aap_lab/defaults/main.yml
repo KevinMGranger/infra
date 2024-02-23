@@ -1,10 +1,4 @@
 ---
-rhel_image_dl_name: "{{ (rhel_image_url | urlsplit('path')).split('/')[-1] }}"
-libvirt_images_path: /var/lib/libvirt/images/
-rhel_image_dl_path: "{{ libvirt_images_path }}/{{ rhel_image_dl_name }}"
-rhel_download_become: true
-rhel_root_password: tahder # did foobar this time
-
 aap_download_url: https://developers.redhat.com/content-gateway/file/ansible/Ansible_Automation_Platform_2.4/ansible-automation-platform-setup-bundle-2.4-1-x86_64.tar.gz
 aap_download_filename: "{{ aap_download_url | urlsplit('path') | basename}}"
 clean_temp_dirs: true

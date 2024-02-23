@@ -1,0 +1,14 @@
+- name: Download rhel image to libvirt images dir
+  when: rhel_image_url | default(false, true)
+  ansible.builtin.get_url:
+    url: "{{ rhel_image_url }}"
+    dest: "{{ rhel_image_dl_path }}"
+    owner: qemu
+    group: qemu
+  become: "{{ rhel_download_become }}"
+
+- name: Set as readonly
+  ansible.builtin.file:
+    path: "{{ rhel_image_dl_path }}"
+    mode: u=r,g=r,o=
+  become: "{{ rhel_download_become }}"

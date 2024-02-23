@@ -1,0 +1,7 @@
+- name: Get image
+  ansible.builtin.import_tasks:
+    name: get_image
+
+- name: Create vm
+  ansible.builtin.import_tasks:
+    name: create_vm

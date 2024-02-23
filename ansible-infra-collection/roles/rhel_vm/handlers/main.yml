@@ -1,0 +1,5 @@
+- name: Remove tempfiles
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop: "{{ tempfiles }}"
