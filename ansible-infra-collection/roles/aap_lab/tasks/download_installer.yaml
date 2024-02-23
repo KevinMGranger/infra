@@ -1,0 +1,10 @@
+# - name: Check if installer is present?
+- name: Make temp dir
+  ansible.builtin.tempfile:
+    state: directory
+  register: aap_dl_tempdir
+
+- name: Download installer
+  ansible.builtin.get_url:
+    url: '{{ aap_download_url }}'
+    dest: '{{ aap_dl_tempdir.path }}/{{ aap_download_filename }}'

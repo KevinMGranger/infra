@@ -1,0 +1,11 @@
+---
+- name: Define VMs
+  ansible.builtin.include_role:
+    name: kmg.infra.rhel_vm
+  vars:
+    vm_name: "{{ item.vm_name }}"
+    memory: "{{ item.memory }}"
+    cpus: "{{ item.cpus }}"
+    disk_gb: "{{ item.disk_gb }}"
+  loop:
+    - { vm_name: aap, memory: 16 GB, cpus: 4, disk_gb: 80 }

@@ -8,6 +8,8 @@ memory: 4Gb
 cpus: 2 # TODO: 4?
 
 cloud_init_content:
+  hostname: "{{ vm_name }}"
+  fqdn: "{{ fqdn | default(omit) }}"
   password: "{{ user_password }}"
   chpasswd: { expire: false }
   # TODO: ssh keys
