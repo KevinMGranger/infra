@@ -7,9 +7,24 @@ disk_gb: 80
 memory: 4Gb
 cpus: 2 # TODO: 4?
 
+tailscale_commands:
+  - ["sh", "-c", "curl -fsSL https://tailscale.com/install.sh | sh"]
+  # Set sysctl settings for IP forwarding (useful when configuring an exit node)
+  # - ['sh', '-c', "echo 'net.ipv4.ip_forward = 1' | sudo tee -a /etc/sysctl.d/99-tailscale.conf && echo 'net.ipv6.conf.all.forwarding = 1' | sudo tee -a /etc/sysctl.d/99-tailscale.conf && sudo sysctl -p /etc/sysctl.d/99-tailscale.conf" ]
+
+  # Generate an auth key from your Admin console
+  # https://login.tailscale.com/admin/settings/keys
+  # and replace the placeholder below
+  - ["tailscale", "up", "--authkey={{ ts_auth_key }}"]
+  # Optional: Include this line to make this node available over Tailscale SSH
+  # - ['tailscale', 'set', '--ssh']
+  # Optional: Include this line to configure this machine as an exit node
+  # - ['tailscale', 'set', '--advertise-exit-node']
+
 cloud_init_content:
   hostname: "{{ vm_name }}"
   fqdn: "{{ fqdn | default(omit) }}"
   password: "{{ user_password }}"
   chpasswd: { expire: false }
   # TODO: ssh keys
+  runcmd: "{{ ts_auth_key is defined | ternary(tailscale_commands, omit) }}"

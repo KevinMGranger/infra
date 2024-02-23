@@ -13,7 +13,9 @@
 - name: Write cloud-init data
   ansible.builtin.file:
     path: "{{ cloud_init_tempfile.path }}"
-    content: "{{ cloud_init_content | to_yaml }}"
+    content: |
+      #cloud-config
+      {{ cloud_init_content | to_yaml }}
 
 - name: Create vm
   ansible.builtin.command:
