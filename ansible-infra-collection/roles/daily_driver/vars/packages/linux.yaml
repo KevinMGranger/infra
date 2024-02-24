@@ -9,6 +9,7 @@ packages_fedora:
   - gh
   - just
   - httpie
+  - policycoreutils-python-utils
 packages_redhat: [] # rhel-specific names
 retired_packages: []
 retired_packages_redhat: []
