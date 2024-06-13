@@ -1,18 +1,18 @@
-packages_linux: # same names on any linux target
-  - ripgrep
-  - fd-find
-  - neovim
-  - python3.11
-  - python3-hvac
-  - dnf-plugin-system-upgrade
-packages_fedora:
-  - gh
-  - just
-  - httpie
-  - policycoreutils-python-utils
-packages_redhat: [] # rhel-specific names
-retired_packages: []
-retired_packages_redhat: []
+packages: # common to all distros
+- ripgrep
+- fd-find
+- neovim
+- python3.11
+- python3-hvac
+- dnf-plugin-system-upgrade
+fedora:
+- gh
+- just
+- httpie
+- policycoreutils-python-utils
+redhat: [] # rhel-specific names
+
+# TODO: how to handle this properly (or ignore?)
 skip_packages_redhat_8:
   - exa
   - bat

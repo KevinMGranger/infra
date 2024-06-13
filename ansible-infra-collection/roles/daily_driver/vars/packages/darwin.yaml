@@ -1,11 +1,8 @@
-packages_macosx:
+packages:
 - rg
 - fd
 - nvim
 - tokei
-- python@3.9
-- python@3.10
-- python@3.11
 - python@3.12
 - jq
 - yq
@@ -17,7 +14,7 @@ packages_macosx:
 - ascii
 - tokei
 - tailscale
-- vault
+# - vault # soft retired while looking into openbao
 - git-delta
 - openshift-cli
 - kubectl
@@ -26,10 +23,13 @@ packages_macosx:
 - just
 - gh
 - httpie
-retired_packages_macosx:
+retired:
 - dnsmasq
 - python@3.8
-packages_darwin_casks:
-- mockoon
+- python@3.9
+- python@3.10
+- python@3.11
+casks:
+# - mockoon
 - powershell
 - visual-studio-code
