@@ -9,6 +9,7 @@ default_script_perms: u=rwx,g=,o=
 
 python_packages:
   - ansible-lint
+  - ansible
 #   - requests
 #   - attrs
 #   - cryptography

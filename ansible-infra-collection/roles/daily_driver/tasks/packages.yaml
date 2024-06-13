@@ -6,43 +6,60 @@
   become: true
   when: ansible_distribution == "RedHat" and ansible_distribution_major_version == "9"
 
-- name: Remove old packages # TODO: convert to new vars logic
-  ansible.builtin.package:
-    name: "{{ retired_packages + vars['retired_packages_' + (ansible_os_family | lower)] }}"
-    state: absent
-  become: "{{ _is_not_mac }}"
-  tags: [pkg]
-
 - name: Import common packages
   ansible.builtin.include_vars:
+    name: packages_common
     file: packages/common.yaml
 
-- name: Import distro/system-specific packages
+- name: Import system-specific packages
   ansible.builtin.include_vars:
-    # this won't cause an error if absent
-    dir: packages
-    files_matching: '{{ ansible_system }}\.yaml'
+    name: packages_sys
+    file: packages/{{ ansible_system }}.yaml
+
+# TODO: why was I doing it this way before?
+# - name: Import distro/system-specific packages
+#   ansible.builtin.include_vars:
+#     # this won't cause an error if absent
+#     dir: packages
+#     files_matching: '{{ ansible_system }}\.yaml'
 
 - name: Combine package specifications
   vars:
     # system is something like linux/darwin
-    sys_pkgs: "{{ vars['packages_' + (ansible_system | lower)] | default([]) }}"
+    sys_pkgs: "{{ packages_sys.packages | default([]) }}"
+    sys_retired: "{{ packages_sys.retired | default([]) }}"
+
     # distribution is something like fedora/macos
-    dist_pkgs: "{{ vars['packages_' + (ansible_distribution | lower)] | default([]) }}"
+    dist_pkgs: "{{ packages_sys[(ansible_distribution | lower)] | default([]) }}"
+    dist_retired: "{{ packages_sys['retired_' + (ansible_distribution | lower)] | default([]) }}"
 
-    sys_skip: "{{ vars['skip_packages_' + (ansible_system | lower)] | default([]) }}"
-    dist_skip: "{{ vars['skip_packages_' + (ansible_distribution | lower)] | default([]) }}"
+    sys_skip: "{{ packages_sys.skip | default([]) }}"
 
-    _dist_major_name: "{{ (ansible_distribution | lower) }}_{{ ansible_distribution_major_version }}"
+    # TODO: properly handling version checking (IN VARS FILE, NOT HERE)
+    # for skipping. Until then, skipping skipping. And also major versioning.
 
-    major_dist_pkgs: "{{ vars['packages_' + _dist_major_name] | default([]) }}"
-    major_dist_skip: "{{ vars['skip_packages_' + _dist_major_name] | default([]) }}"
+    # sys_skip: "{{ packages_sys['skip_packages_']
+    # vars['skip_packages_' + (ansible_system | lower)] | default([]) }}"
+    # dist_skip: "{{ vars['skip_packages_' + (ansible_distribution | lower)] | default([]) }}"
 
-    _all_pkgs: "{{ (packages_common + sys_pkgs + dist_pkgs + major_dist_pkgs) | unique }}"
+
+    # major_dist_pkgs: "{{ vars['packages_' + _dist_major_name] | default([]) }}"
+    # major_dist_skip: "{{ vars['skip_packages_' + _dist_major_name] | default([]) }}"
+
+    _all_pkgs: "{{ (packages_common.packages + sys_pkgs + dist_pkgs) | unique }}"
     # TODO: skip as extra var for play / CLI?
-    _all_skip: "{{ (sys_skip + dist_skip + major_dist_skip) | unique}}"
+    # ll_skip: "{{ (sys_skip + dist_skip + major_dist_skip) | unique}}"
+    _all_skip: "{{ [] }}"
   ansible.builtin.set_fact:
     packages: "{{ _all_pkgs | difference(_all_skip) }}"
+    retired_packages: "{{ packages_common.packages + sys_retired + dist_retired | unique }}"
+
+- name: Remove old packages
+  ansible.builtin.package:
+    name: "{{ retired_packages }}"
+    state: absent
+  become: "{{ _is_not_mac }}"
+  tags: [pkg]
 
 - name: Install packages
   ansible.builtin.package:
