@@ -1,7 +1,8 @@
 - name: Install packages
   ansible.builtin.include_tasks: packages.yaml
-  tags: pkg
+  tags: [pkg, cask]
 
+# TODO: why is this always running? cuz of async?
 - name: Install rust(up) # noqa command-instead-of-module
   ansible.builtin.shell:
     cmd: curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
@@ -25,7 +26,7 @@
 - name: Copy kube ctx fish prompt part
   ansible.builtin.copy:
     mode: "{{ default_file_perms }}"
-    src: ../../config-files/fish_extra/05-kubernetes-prompt.fish
+    src: fish_extra/05-kubernetes-prompt.fish
     dest: ~/.config/fish/conf.d/_manual_source/prompt_parts.d/
   when: _do_kube_setup
   tags: [kube-ctx]
@@ -62,7 +63,7 @@
   retries: 30
   delay: 5
   become: "{{ ansible_os_family != 'Darwin' }}"
-  tags: [fishy, pkg]
+  tags: [pkg]
 
 - name: Wait for casks to be installed
   ansible.builtin.async_status:
@@ -72,7 +73,7 @@
   retries: 30
   delay: 5
   become: false
-  tags: [fishy, pkg]
+  tags: [pkg, cask]
   when: _is_mac
 
 - name: Set fish to default shell

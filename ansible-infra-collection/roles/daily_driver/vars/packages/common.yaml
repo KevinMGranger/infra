@@ -2,11 +2,12 @@
 packages:
   - htop
   - fish
-  - exa
+  - eza
   - bat
   - git
   - podman
   - tmux
   # - ansible # REMOVED: better to handle through pip
   - lnav
-retired: []
+retired:
+  - exa

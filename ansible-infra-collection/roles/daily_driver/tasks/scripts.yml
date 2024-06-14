@@ -6,7 +6,7 @@
 
 - name: Copy into ~/.local/bin
   ansible.builtin.copy:
-    src: ../../tools/scripts/
+    src: "{{ scripts_dir }}"
     dest: ~/.local/bin
     directory_mode: "{{ default_dir_perms }}"
     mode: preserve

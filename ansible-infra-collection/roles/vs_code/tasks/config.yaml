@@ -2,7 +2,7 @@
   when: "'vscode_remotes' in groups"
   template:
     dest: ~/.ssh/config-vscode
-    src: ../../config-files/vscode/ssh_config
+    src: ssh_config.j2
   tags: [vscode-ssh-config]
 
 - name: Copy config file

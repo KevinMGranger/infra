@@ -10,11 +10,13 @@
   ansible.builtin.include_vars:
     name: packages_common
     file: packages/common.yaml
+  tags: pkg
 
 - name: Import system-specific packages
   ansible.builtin.include_vars:
     name: packages_sys
     file: packages/{{ ansible_system }}.yaml
+  tags: [pkg, cask]
 
 # TODO: why was I doing it this way before?
 # - name: Import distro/system-specific packages
@@ -52,14 +54,15 @@
     _all_skip: "{{ [] }}"
   ansible.builtin.set_fact:
     packages: "{{ _all_pkgs | difference(_all_skip) }}"
-    retired_packages: "{{ packages_common.packages + sys_retired + dist_retired | unique }}"
+    retired_packages: "{{ packages_common.retired + sys_retired + dist_retired | unique }}"
+  tags: pkg
 
 - name: Remove old packages
   ansible.builtin.package:
     name: "{{ retired_packages }}"
     state: absent
   become: "{{ _is_not_mac }}"
-  tags: [pkg]
+  tags: pkg
 
 - name: Install packages
   ansible.builtin.package:
@@ -68,11 +71,24 @@
   poll: 0
   register: pkg_install
   become: "{{ _is_not_mac }}"
-  tags: [pkg]
+  tags: pkg
+
+# TODO: homebrew_cask is broken in community.general 9.0.1
+- name: Install casks
+  ansible.builtin.command:
+    argv: "{{ base_cmd + args }}"
+  async: 300 # 5 minutes
+  poll: 0
+  register: cask_install
+  tags: [pkg, cask]
+  when: _is_mac and (args | length is gt(0))
+  vars:
+    base_cmd: [brew, install, --cask]
+    args: "{{ packages_sys.casks | default([]) }}"
 
 - name: Install system python packages (mac only for now)
   ansible.builtin.pip:
-    name: "{{ python_packages }}"
+    name: "{{ python_packages | default([]) }}"
   when: _is_mac
   become: "{{ ansible_os_family != 'Darwin' }}"
-  tags: [pkg]
+  tags: pkg
