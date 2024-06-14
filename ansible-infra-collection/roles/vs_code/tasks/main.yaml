@@ -1,6 +1,9 @@
-- name: Install VS Code
-  ansible.builtin.include_tasks: install.yaml
-  tags: [vscode-install]
+# TODO: handled by daily_driver pkg step.
+# This should be conditional based on it already being installed,
+# to make this work with or without that.
+# - name: Install VS Code
+#   ansible.builtin.include_tasks: install.yaml
+#   tags: [vscode-install]
 
 - name: Configure VS Code
   ansible.builtin.include_tasks:
