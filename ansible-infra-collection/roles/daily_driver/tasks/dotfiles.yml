@@ -1,6 +1,6 @@
 - name: Copy into ~/.config
   ansible.builtin.copy:
-    src: config
+    src: config/
     dest: ~/.config
     directory_mode: "{{ default_dir_perms }}"
     mode: preserve
