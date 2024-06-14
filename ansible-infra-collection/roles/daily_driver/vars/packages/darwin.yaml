@@ -24,6 +24,7 @@ packages:
 - just
 - gh
 - httpie
+- sshpass # for ansible ssh keys with passwords
 retired:
 - dnsmasq
 - python@3.8
