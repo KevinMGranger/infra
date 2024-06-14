@@ -7,4 +7,4 @@ alias fconf "code ~/.config/fish"
 
 alias docker podman
 
-alias gp git push
+alias gp "git push"
