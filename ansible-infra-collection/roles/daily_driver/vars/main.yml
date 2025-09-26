@@ -7,6 +7,8 @@ default_dir_perms: u=rwx,g=,o=
 default_file_perms: u=rw,g=,o=
 default_script_perms: u=rwx,g=,o=
 
+scripts_dir: "tools/scripts"
+
 # TODO: complaints, saying it should use homebrew???
 python_packages: []
 #   - ansible-lint
