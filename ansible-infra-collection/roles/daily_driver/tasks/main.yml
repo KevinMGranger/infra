@@ -17,11 +17,13 @@
   ansible.builtin.import_tasks: dotfiles.yml
   tags: config
 
-- name: Configure VS Code
-  ansible.builtin.include_role: 
-    name: kmg.infra.vs_code
-    tasks_from: config.yaml
-  tags: config
+# skipping for now, need to totally rework anyway
+
+# - name: Configure VS Code
+#   ansible.builtin.include_role: 
+#     name: kmg.infra.vs_code
+#     tasks_from: config.yaml
+#   tags: config
 
 - name: Copy kube ctx fish prompt part
   ansible.builtin.copy:
@@ -35,6 +37,7 @@
   ansible.builtin.import_tasks: "../tasks/scripts.yml"
   tags: [scripts]
 
+# TODO: did I never clean up before?
 - name: Wait for rust
   ansible.builtin.async_status:
     jid: "{{ rustup.ansible_job_id }}"
