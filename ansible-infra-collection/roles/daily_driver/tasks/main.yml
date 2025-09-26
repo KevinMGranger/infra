@@ -17,8 +17,6 @@
   ansible.builtin.import_tasks: dotfiles.yml
   tags: config
 
-# skipping for now, need to totally rework anyway
-
 # - name: Configure VS Code
 #   ansible.builtin.include_role: 
 #     name: kmg.infra.vs_code

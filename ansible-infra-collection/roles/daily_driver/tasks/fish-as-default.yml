@@ -25,3 +25,7 @@
     name: kevin
     shell: "{{ fish_path_output.stdout }}"
   tags: [become]
+
+- name: Set vs code settings
+  ansible.builtin.include_tasks: vscode_fish.yml
+  when: vscode_fish | default(false)

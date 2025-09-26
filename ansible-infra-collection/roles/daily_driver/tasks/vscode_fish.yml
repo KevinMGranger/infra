@@ -1,0 +1,21 @@
+# (ASSUMES LOCAL MACHINE)
+- name: Slurp up existing vs code config and set value
+  ansible.builtin.set_fact:
+    vs_code_settings: "{{ _settings | combine(_augment_with) }}"
+  vars:
+    _settings: >-
+      {{
+        lookup('file', '~/.vscode-server/data/Machine/settings.json')
+        | from_yaml
+      }}
+    _augment_with:
+      "terminal.integrated.defaultProfile.linux": fish
+      "terminal.integrated.profiles.linux":
+        fish:
+          # TODO maybe don't hardcode
+          path: /usr/sbin/fish
+
+- name: Write settings
+  ansible.builtin.copy:
+    path: '~/.vscode-server/data/Machine/settings.json'
+    content: "{{ vs_code_settings | to_json }}"

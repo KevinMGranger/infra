@@ -5,18 +5,18 @@
 #   ansible.builtin.include_tasks: install.yaml
 #   tags: [vscode-install]
 
-- name: Configure VS Code
-  ansible.builtin.include_tasks:
-    file: config.yaml
-    apply:
-      tags: [vscode-config]
-  tags: [vscode-config]
+# - name: Configure VS Code
+#   ansible.builtin.include_tasks:
+#     file: config.yaml
+#     apply:
+#       tags: [vscode-config]
+#   tags: [vscode-config]
 
-- name: Install VS Code extensions
-  ansible.builtin.include_tasks: extensions.yaml
-  tags: [vscode-extensions]
+# - name: Install VS Code extensions
+#   ansible.builtin.include_tasks: extensions.yaml
+#   tags: [vscode-extensions]
 
-- name: Debug 'settings.yaml'
-  ansible.builtin.debug:
-    var: vs_code_settings
-  tags: [never, debug]
+# - name: Debug 'settings.yaml'
+#   ansible.builtin.debug:
+#     var: vs_code_settings
+#   tags: [never, debug]
