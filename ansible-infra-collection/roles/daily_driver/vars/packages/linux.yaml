@@ -2,8 +2,8 @@ packages: # common to all distros
 - ripgrep
 - fd-find
 - neovim
-- python3.11
-- python3.12
+# - python3.11
+# - python3.12
 # - python3-hvac # on pause
 - dnf-plugin-system-upgrade
 fedora:

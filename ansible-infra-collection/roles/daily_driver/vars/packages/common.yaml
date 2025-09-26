@@ -2,7 +2,7 @@
 packages:
   - htop
   - fish
-  - eza
+  # - eza
   - bat
   - git
   - podman
