@@ -17,5 +17,5 @@
 
 - name: Write settings
   ansible.builtin.copy:
-    path: '~/.vscode-server/data/Machine/settings.json'
+    dest: '~/.vscode-server/data/Machine/settings.json'
     content: "{{ vs_code_settings | to_json }}"
