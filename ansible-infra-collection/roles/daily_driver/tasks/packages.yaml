@@ -15,7 +15,7 @@
 - name: Import system-specific packages
   ansible.builtin.include_vars:
     name: packages_sys
-    file: packages/{{ ansible_system }}.yaml
+    file: packages/{{ ansible_system | lower }}.yaml
   tags: [pkg, cask]
 
 # TODO: why was I doing it this way before?
