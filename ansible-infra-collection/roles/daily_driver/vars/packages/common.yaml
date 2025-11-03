@@ -7,7 +7,8 @@ packages:
   - git
   - podman
   - tmux
-  # - ansible # REMOVED: better to handle through pip
+  # - ansible # REMOVED: better to handle through pip?
   - lnav
+  - dua-cli
 retired:
   - exa
