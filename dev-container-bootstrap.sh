@@ -9,5 +9,5 @@ ansible-playbook kmg.infra.daily_driver -i ./inventories/local.ini -e vscode_fis
 
 # TODO: probably make this part of ansible?
 
-mkdir ~/.bashrc.d
+mkdir -p ~/.bashrc.d
 echo "if which fish; then exec fish; else echo 'no fish'; fi" > ~/.bashrc.d/fishy
