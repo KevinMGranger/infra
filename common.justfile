@@ -8,8 +8,15 @@ install-role role_path:
 #     ln -fs {{ absolute_path(join(invocation_directory(), collection_path)) }} \
 #         ~/.ansible/collections/ansible_collections/{{ replace(name, '.', '/') }}
 
+#    #!/usr/bin/env python
 install-collection path:
-    #!/usr/bin/env python
+    #!/usr/bin/env -S uv run --script
+    # /// script
+    # dependencies = [
+    #   "pyyaml",
+    # ]
+    # ///
+
     import yaml
     from pathlib import Path
 
