@@ -3,34 +3,30 @@ packages:
 - fd
 - nvim
 - tokei
-- python@3.11
-- python@3.12
+- python
 - jq
 - yq
 - tree
 - moreutils
 - watch
-- node
-- golang
 - ascii
 - tokei
 - tailscale
+# - node
+# - golang
 # - vault # soft retired while looking into openbao
-- git-delta
-- openshift-cli
-- kubectl
-- helm
-- skopeo
+# - git-delta
+# - openshift-cli
+# - kubectl
+# - helm
+# - skopeo
 - just
 - gh
 - httpie
-- sshpass # for ansible ssh keys with passwords
+# - sshpass # for ansible ssh keys with passwords
+- powershell
 retired:
 - dnsmasq
-- python@3.8
-- python@3.9
-- python@3.10
 casks:
 # - mockoon
-- powershell
 - visual-studio-code
