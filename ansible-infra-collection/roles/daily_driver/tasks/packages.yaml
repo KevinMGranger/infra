@@ -86,9 +86,9 @@
     base_cmd: [brew, install, --cask]
     args: "{{ packages_sys.casks | default([]) }}"
 
-- name: Install system python packages (mac only for now)
-  ansible.builtin.pip:
-    name: "{{ python_packages | default([]) }}"
-  when: _is_mac
-  become: "{{ ansible_os_family != 'Darwin' }}"
-  tags: pkg
+# - name: Install system python packages (mac only for now)
+#   ansible.builtin.pip:
+#     name: "{{ python_packages | default([]) }}"
+#   when: _is_mac
+#   become: "{{ ansible_os_family != 'Darwin' }}"
+#   tags: pkg
