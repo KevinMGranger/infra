@@ -25,6 +25,7 @@ packages:
 - httpie
 # - sshpass # for ansible ssh keys with passwords
 - powershell
+- utm
 retired:
 - dnsmasq
 casks:
