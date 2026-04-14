@@ -2,8 +2,6 @@
 packages:
   - htop
   - fish
-  # - eza
-  - bat
   - git
   - podman
   - tmux
