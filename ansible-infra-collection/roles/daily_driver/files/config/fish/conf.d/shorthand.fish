@@ -1,5 +1,5 @@
-abbr -a l eza
-abbr -a ll eza --long --header --git
+abbr -a l ls
+abbr -a ll ls -l
 
 alias hl helpless
 
