@@ -33,7 +33,10 @@
   poll: 0
   register: cask_install
   tags: [pkg, cask]
-  when: _is_mac and (args | length is gt(0))
+  when:
+    - not ansible_check_mode
+    - _is_mac
+    - (cmd_args | length is gt(0))
   vars:
     base_cmd: [brew, install, --cask]
     cmd_args: "{{ packages_sys.casks | default([]) }}"

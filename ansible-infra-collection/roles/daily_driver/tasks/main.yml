@@ -75,7 +75,7 @@
   delay: 5
   become: false
   tags: [pkg, cask]
-  when: _is_mac
+  when: cask_install is defined
 
 - name: Set fish to default shell
   ansible.builtin.import_tasks: "../tasks/fish-as-default.yml"
