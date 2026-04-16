@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python
 
 from collections.abc import Iterable, Sequence
 import subprocess
