@@ -3,7 +3,6 @@
 from collections.abc import Iterable, Sequence
 import subprocess
 from typing import Any
-from pprint import pprint
 
 from ansible.module_utils.basic import AnsibleModule
 
@@ -33,7 +32,10 @@ def get_packages_info() -> dict[str, dict[str, Any]]:
 
 
 def main():
-    pprint(get_packages_info())
+    # TODO: norm for check mode when it's inherently info-gathering?
+    module = AnsibleModule(argument_spec={}, supports_check_mode=True)
+    module.exit_json(changed=False, packages=get_packages_info())
+
 
 if __name__ == "__main__":
     main()
