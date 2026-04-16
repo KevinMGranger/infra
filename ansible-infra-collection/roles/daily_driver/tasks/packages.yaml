@@ -67,7 +67,7 @@
 - name: Install packages
   ansible.builtin.package:
     name: "{{ packages }}"
-  async: 300 # 5 minutes
+  async: "{{ 5 * 60 }}" # 5 mins
   poll: 0
   register: pkg_install
   become: "{{ _is_not_mac }}"
@@ -77,7 +77,7 @@
 - name: Install casks
   ansible.builtin.command:
     argv: "{{ base_cmd + args }}"
-  async: 300 # 5 minutes
+  async: "{{ 5 * 60 }}" # 5 mins
   poll: 0
   register: cask_install
   tags: [pkg, cask]
