@@ -66,11 +66,6 @@
   become: "{{ ansible_facts.os_family != 'Darwin' }}"
   tags: [pkg]
 
-- name: Debug cask
-  ansible.builtin.debug:
-    var: cask_install
-  check_mode: false
-
 - name: Wait for casks to be installed
   ansible.builtin.async_status:
     jid: "{{ cask_install.ansible_job_id }}"
@@ -80,7 +75,7 @@
   delay: 5
   become: false
   tags: [pkg, cask]
-  when: cask_install is defined
+  when: cask_install.ansible_job_id is defined
 
 - name: Set fish to default shell
   ansible.builtin.import_tasks: "../tasks/fish-as-default.yml"
