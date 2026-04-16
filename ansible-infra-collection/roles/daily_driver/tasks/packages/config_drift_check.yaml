@@ -1,0 +1,18 @@
+- name: Include package vars
+  ansible.builtin.import_tasks: packages/include_package_vars.yaml
+
+- name: Throw if not mac
+  ansible.builtin.assert:
+    that: _is_mac
+    fail_msg: >-
+      package config drift check is
+      only available on mac for now
+
+- name: Get homebrew package info
+  when: _is_mac
+  kmg.infra.brew_package_info:
+  register: _brew_packages
+
+- name: Set vars
+  ansible.builtin.set_facts:
+  # TODO: how do we handle
