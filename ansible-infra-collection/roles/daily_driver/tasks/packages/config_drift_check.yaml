@@ -19,8 +19,7 @@
     fail_msg: >-
       The following packages are present on the system
       but not specified in the config:
-
-      {{ present_but_unspecified | join("\n") }}
+      {{ present_but_unspecified | join(", ") }}
   vars:
     leaves: >-
       {{
