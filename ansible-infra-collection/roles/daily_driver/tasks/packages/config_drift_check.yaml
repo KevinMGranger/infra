@@ -5,7 +5,7 @@
   ansible.builtin.assert:
     that: _is_mac
     fail_msg: >-
-      package config drift check is
+      Package config drift check is
       only available on mac for now
 
 - name: Get homebrew package info
@@ -13,6 +13,20 @@
   kmg.infra.brew_package_info:
   register: _brew_packages
 
-- name: Set vars
-  ansible.builtin.set_facts:
-  # TODO: how do we handle
+- name: Check for drift
+  ansible.builtin.assert:
+    that: present_but_unspecified is empty
+    fail_msg: >-
+      The following packages are present on the system
+      but not specified in the config:
+
+      {{ present_but_unspecified | join('\n') }}
+  vars:
+    leaves: >-
+      {{
+        _brew_packages.packages.values()
+        | selectattr('leaf')
+        | map(attribute='name')
+      }}
+    # TODO: full name handling, cask handling
+    present_but_unspecified: "{{ leaves | difference(packages) }}"

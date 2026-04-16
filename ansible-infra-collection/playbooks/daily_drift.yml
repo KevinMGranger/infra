@@ -1,0 +1,7 @@
+- name: Check for config drift on daily drivers
+  hosts: "{{ target | default('daily_drivers') }}"
+  tasks:
+    - name: Run config drift check
+      ansible.builtin.import_role:
+        name: kmg.infra.daily_driver
+        tasks_from: packages/config_drift_check.yaml

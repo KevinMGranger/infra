@@ -28,7 +28,7 @@ def list_leaves() -> Iterable[str]:
 def get_packages_info() -> dict[str, dict[str, Any]]:
     leaves = set(list_leaves())
     installed = list_installed()
-    return {name: dict(leaf=name in leaves) for name in installed}
+    return {name: dict(name=name, leaf=name in leaves) for name in installed}
 
 
 def main():
