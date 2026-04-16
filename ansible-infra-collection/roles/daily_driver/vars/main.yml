@@ -1,7 +1,7 @@
 _do_kube_setup: "{{ do_kube_setup | default('kubernauts' in group_names) }}"
 _install_rust: "{{ install_rust | default('rusty' in group_names) }}"
-_is_not_mac: "{{ ansible_os_family != 'Darwin' }}"
-_is_mac: "{{ ansible_os_family == 'Darwin' }}"
+_is_not_mac: "{{ ansible_facts.os_family != 'Darwin' }}"
+_is_mac: "{{ ansible_facts.os_family == 'Darwin' }}"
 
 default_dir_perms: u=rwx,g=,o=
 default_file_perms: u=rw,g=,o=

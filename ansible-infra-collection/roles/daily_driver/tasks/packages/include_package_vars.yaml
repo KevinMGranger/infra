@@ -7,7 +7,7 @@
 - name: Import system-specific packages
   ansible.builtin.include_vars:
     name: packages_sys
-    file: packages/{{ ansible_system | lower }}.yaml
+    file: packages/{{ ansible_facts.system | lower }}.yaml
   tags: [pkg, cask]
 
 # TODO: why was I doing it this way before?
@@ -24,8 +24,8 @@
     sys_retired: "{{ packages_sys.retired | default([]) }}"
 
     # distribution is something like fedora/macos
-    dist_pkgs: "{{ packages_sys[(ansible_distribution | lower)] | default([]) }}"
-    dist_retired: "{{ packages_sys['retired_' + (ansible_distribution | lower)] | default([]) }}"
+    dist_pkgs: "{{ packages_sys[(ansible_facts.distribution | lower)] | default([]) }}"
+    dist_retired: "{{ packages_sys['retired_' + (ansible_facts.distribution | lower)] | default([]) }}"
 
     sys_skip: "{{ packages_sys.skip | default([]) }}"
 
