@@ -3,9 +3,9 @@
   roles: [kevinmgranger.crc.crc]
   vars:
     config:
-      memory: "{{ 20 * 1024 }}" # 20gb -> mib
-      disk-size: 128 # gb
-      cpus: 16
+      memory: "{{ 16 * 1024 }}" # 16gb -> mib
+      disk-size: 64 # gb
+      # cpus: 16
       consent-telemetry: "yes"
       enable-cluster-monitoring: "true"
     pull_secret_path: "{{ ansible_env.HOME }}/crc_pull_secret"
