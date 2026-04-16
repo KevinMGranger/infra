@@ -28,7 +28,7 @@
 # TODO: homebrew_cask is broken in community.general 9.0.1
 - name: Install casks
   ansible.builtin.command:
-    argv: "{{ base_cmd + args }}"
+    argv: "{{ base_cmd + cmd_args }}"
   async: "{{ 5 * 60 }}" # 5 mins
   poll: 0
   register: cask_install
@@ -36,7 +36,7 @@
   when: _is_mac and (args | length is gt(0))
   vars:
     base_cmd: [brew, install, --cask]
-    args: "{{ packages_sys.casks | default([]) }}"
+    cmd_args: "{{ packages_sys.casks | default([]) }}"
 
 # - name: Install system python packages (mac only for now)
 #   ansible.builtin.pip:

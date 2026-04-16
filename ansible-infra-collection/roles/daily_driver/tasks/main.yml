@@ -63,7 +63,7 @@
   until: pkg_install_result.finished
   retries: 30
   delay: 5
-  become: "{{ ansible_os_family != 'Darwin' }}"
+  become: "{{ ansible_facts.os_family != 'Darwin' }}"
   tags: [pkg]
 
 - name: Wait for casks to be installed
