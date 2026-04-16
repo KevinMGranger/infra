@@ -66,6 +66,11 @@
   become: "{{ ansible_facts.os_family != 'Darwin' }}"
   tags: [pkg]
 
+- name: Debug cask
+  ansible.builtin.debug:
+    var: cask_install
+  check_mode: false
+
 - name: Wait for casks to be installed
   ansible.builtin.async_status:
     jid: "{{ cask_install.ansible_job_id }}"
