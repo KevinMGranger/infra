@@ -1,33 +1,34 @@
 packages:
-- rg
-- fd
-- nvim
-- tokei
-- python
-- jq
-- yq
-- tree
-- moreutils
-- watch
-- ascii
-- tokei
-- tailscale
-# - node
-# - golang
-# - vault # soft retired while looking into openbao
-# - git-delta
-# - openshift-cli
-# - kubectl
-# - helm
-# - skopeo
-- just
-- gh
-- httpie
-# - sshpass # for ansible ssh keys with passwords
-- powershell
-- utm
+  - rg
+  - fd
+  - nvim
+  - tokei
+  - python
+  - jq
+  - yq
+  - tree
+  - moreutils
+  - watch
+  - ascii
+  - tokei
+  - tailscale
+  # - node
+  # - golang
+  # - vault # soft retired while looking into openbao
+  # - git-delta
+  # - openshift-cli
+  # - kubectl
+  # - helm
+  # - skopeo
+  - just
+  - gh
+  - httpie
+  # - sshpass # for ansible ssh keys with passwords
+  # - powershell
+  - utm
+  - yt-dlp
 retired:
-- dnsmasq
+  - dnsmasq
 casks:
-# - mockoon
-- visual-studio-code
+  # - mockoon
+  - visual-studio-code
