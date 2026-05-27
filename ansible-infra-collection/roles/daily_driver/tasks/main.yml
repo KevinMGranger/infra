@@ -18,18 +18,18 @@
   tags: config
 
 # - name: Configure VS Code
-#   ansible.builtin.include_role: 
+#   ansible.builtin.include_role:
 #     name: kmg.infra.vs_code
 #     tasks_from: config.yaml
 #   tags: config
 
-- name: Copy kube ctx fish prompt part
-  ansible.builtin.copy:
-    mode: "{{ default_file_perms }}"
-    src: fish_extra/05-kubernetes-prompt.fish
-    dest: ~/.config/fish/conf.d/_manual_source/prompt_parts.d/
-  when: _do_kube_setup
-  tags: [kube-ctx]
+# - name: Copy kube ctx fish prompt part
+#   ansible.builtin.copy:
+#     mode: "{{ default_file_perms }}"
+#     src: fish_extra/05-kubernetes-prompt.fish
+#     dest: ~/.config/fish/conf.d/_manual_source/prompt_parts.d/
+#   when: _do_kube_setup
+#   tags: [kube-ctx]
 
 - name: Handle scripts
   ansible.builtin.import_tasks: "../tasks/scripts.yml"
@@ -46,6 +46,8 @@
   tags: [rust]
   when: rustup_result is defined
 
+# TODO: yeah I don't agree with this anymore,
+# there's a better way. Temporarily enabling this with python or whatnot methinks
 - name: Install current-kube-context
   ansible.builtin.command:
     cmd: cargo install --git https://github.com/KevinMGranger/rukube/ current-kube-context

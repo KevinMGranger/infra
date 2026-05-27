@@ -27,6 +27,7 @@
       tags: [install]
 
     - name: Connect to tailscale
+      become: true # TODO: maybe not on mac?
       ansible.builtin.command:
         argv:
           - tailscale
@@ -35,7 +36,7 @@
           - --auth-key
           - "{{ tailscale_auth_key }}"
       tags: [auth]
-      when: tailscale_auth_key | default(false, true)
+      when: (tailscale_auth_key | default("")) | length != 0
 
     - name: Create firewalld zone
       ansible.posix.firewalld:

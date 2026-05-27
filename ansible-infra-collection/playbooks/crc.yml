@@ -1,14 +1,14 @@
 - name: Set up CodeReady Containers / OpenShift Local
   hosts: crc_runners
-  roles: [kevinmgranger.crc.crc]
+  roles: [kevinmgranger.crc]
   vars:
     config:
-      memory: "{{ 16 * 1024 }}" # 16gb -> mib
+      memory: "{{ 24 * 1024 }}" # 16gb -> mib
       disk-size: 64 # gb
-      # cpus: 16
+      cpus: "{{ ansible_facts.processor_vcpus }}"
       consent-telemetry: "yes"
       enable-cluster-monitoring: "true"
-    pull_secret_path: "{{ ansible_env.HOME }}/crc_pull_secret"
+    pull_secret_path: "{{ ansible_facts.user_dir }}/crc_pull_secret"
   vars_prompt:
     - name: pull_secret
       prompt: "Pull secret? (press enter / use blank to skip pull secret setup)"

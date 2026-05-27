@@ -7,5 +7,6 @@
   hosts: vm_runners
   tasks:
     - name: Install vm items
+      become: true
       ansible.builtin.package:
         name: [guestfs-tools]
