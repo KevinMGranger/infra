@@ -1,35 +1,35 @@
 - name: Set up CodeReady Containers / OpenShift Local
   hosts: crc_runners
-  roles: [kevinmgranger.crc]
   vars:
-    config:
-      memory: "{{ 24 * 1024 }}" # 16gb -> mib
-      disk-size: 64 # gb
-      cpus: "{{ ansible_facts.processor_vcpus }}"
-      consent-telemetry: "yes"
-      enable-cluster-monitoring: "true"
-    pull_secret_path: "{{ ansible_facts.user_dir }}/crc_pull_secret"
+    crc_memory_mib: "{{ 24 * 1024 }}" # 16gb -> mib
+    crc_disk_gib: 64 # gb
+    crc_cpus: "{{ ansible_facts.processor_vcpus }}"
+    crc_consent_telemetry: "yes"
+    crc_enable_cluster_monitoring: "true"
+    crc_pull_secret_path: "{{ ansible_facts.user_dir }}/.crc/pull_secret"
   vars_prompt:
-    - name: pull_secret
+    - name: crc_pull_secret
       prompt: "Pull secret? (press enter / use blank to skip pull secret setup)"
   tasks:
+    - name: Do install
+      ansible.builtin.include_role:
+        name: kmg.crc.crc
+
     - name: Set CRC config items
-      ansible.builtin.command:
-        cmd: crc
-        argv: [config, set, "{{ item.key }}", "{{ item.value }}"]
-      changed_when: true
-      loop: "{{ config | dict2items }}"
+      ansible.builtin.include_role:
+        name: kmg.crc.crc
+        tasks_from: configure.yml
 
     - name: Set up pull secret file contents
       ansible.builtin.copy:
-        dest: "{{ pull_secret_path }}"
+        dest: "{{ crc_pull_secret_path }}"
         mode: u=r
-        content: "{{ pull_secret }}"
-      when: pull_secret != ""
+        content: "{{ crc_pull_secret }}"
+      when: (crc_pull_secret | default("") | length != 0
 
     - name: Set pull secret path in config
       ansible.builtin.command:
-        cmd: crc
-        argv: [config, set, "pull-secret-file", "{{ pull_secret_path }}"]
+        argv:
+          [crc, config, set, "pull-secret-file", "{{ crc_pull_secret_path }}"]
       changed_when: true
-      when: pull_secret != ""
+      when: (crc_pull_secret | default("") | length != 0
